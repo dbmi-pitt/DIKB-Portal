@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+    <head>
+        <title>DIKB Evidence Base</title>
+        <link rel="stylesheet" type="text/css" href="css/ddistyle.css" />
+        <meta charset="UTF-8">
+        <script src="js/jquery-1.11.1.min.js"></script>
+        <link href="css/listbox.css" rel="stylesheet" />
+        <link href="css/BacktoTop.css" rel="stylesheet" />
+        <link href="css/flat-ui.min.css" rel="stylesheet"/>
+        <link href="css/demo.css" rel="stylesheet"/>
+		<script src="js/modernizr.js"></script>
+        <script src="js/listbox.js"></script>
+		<script src="js/main.js"></script>
+	    <link rel="stylesheet" href="css/jquery-dialog-ui.css">
+	    <script src="js/jquery-ui.js"></script>
+        <script src="js/d3.min.js"></script>
+        <script src="js/d3-timeline.js"></script>
+        
+        <script src="http://code.jquery.com/jquery-1.7.js" type="text/javascript"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js" type="text/javascript"></script>
+        <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+        <STYLE TYPE="text/css" media="all">
+        #drugSelection1{
+    display:block;
+    float:left;
+    padding: 5px;
+    margin-left: 360px;
+    align: center;
+}
+#drugSelection1t{
+    display:block;
+    float:left;
+    padding: 5px;
+    margin-left: 140px;
+    align: center;
+}
+#drugSelection2{
+    display:block;
+    float:left;
+    padding: 5px;
+    margin-left: 30px;
+
+}
+            .ui-autocomplete { 
+                position: absolute; 
+                cursor: default; 
+                height: 200px; 
+                width: 180px;
+                overflow-y: scroll; 
+                overflow-x: hidden;
+                font-size: 13px;
+            }
+            .axis path,
+            .axis line {
+                fill: none;
+                stroke: #000;
+                shape-rendering: crispEdges;
+            }
+            #figure {
+                font: 10px sans-serif;
+            }
+        </STYLE>
+
+        <style type="text/css">
+
+    .axis text {
+      font-family: sans-serif;
+      font-size: 10px;
+    }
+
+    .timeline-label {
+      font-family: sans-serif;
+      font-size: 12px;
+    }
+
+    #timeline2 .axis {
+      transform: translate(0px,40px);
+      -ms-transform: translate(0px,40px); /* IE 9 */
+      -webkit-transform: translate(0px,40px); /* Safari and Chrome */
+      -o-transform: translate(0px,40px); /* Opera */
+      -moz-transform: translate(0px,40px); /* Firefox */
+    }
+    
+    .coloredDiv {
+      height:20px; width:20px;
+    }
+  </style>
+  <script type="text/javascript">
+    window.onload = function() {
+var testData = [];
+      //alert(testData[0].label);
+      $.ajax({
+                
+            url: "http://localhost:8080/WebAPI/DIKB/recent/5",
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+              
+                var j = 0;
+                //alert(query);
+                for (var i = 0; i < data.length; i++) {
+                    testData[i] = data[i];
+                    testData[i].label = "";
+                    //if(testData[i].times[0].starting_time)
+                    //testData[1].times[0].starting_time = testData[1].times[0].starting_time - 2000000;
+                    //testData[1].times[0].ending_time = testData[1].times[0].ending_time - 2000000;
+
+                    //items[i+1] = tempitem[0];
+                }
+
+      var width = 500;
+      
+
+      function timelineCircle() {
+        
+        var chart = d3.timeline()
+          .tickFormat( //
+            {format: d3.time.format("%I %p"),
+            tickTime: d3.time.hours,
+            tickInterval: 1,
+            tickSize: 30})
+          .display("circle")
+          .hover(function (d, i, datum) {
+          // d is the current rendering object
+          // i is the index during d3 rendering
+          // datum is the id object
+            var div = $('#hoverRes');
+            var colors = chart.colors();
+            div.find('blockquote').css('border-left', "10px solid "+colors(i));
+            div.find('blockquote').css('box-shadow', "2px 2px 15px #ccc");
+            div.find('blockquote').css('width', "350px");
+            var tempcontent = '';
+            tempcontent = "<a href='"+ datum.evidence + "' target='_blank'>More Details</a>";
+            div.find('#objectname').text("Time: "+datum.dateAnnotated);
+            div.find('#sourcetype').text("SourceType: "+datum.name);
+            div.find('#name').text(datum.evidenceRole+ ": "+datum.researchStatementLabel+'\n');
+            $('#statement').empty();
+            $('#statement').append(tempcontent);
+            //$('#statement').text(datum.evidence);
+          })
+          .click(function (d, i, datum) {
+            //alert(datum.label);
+          }); // toggle between rectangles and circles
+          
+
+        var svg = d3.select("#timeline2").append("svg").attr("width", width)
+          .datum(testData).call(chart);
+      }
+      
+      timelineCircle();
+
+      },
+            error: function(data) {
+                alert("Something went wrong while getting Index list. Please try again.");
+            }
+                
+            });
+      
+    }
+
+
+$(document).ready(function() {
+
+
+    var restBaseUrl = "http://localhost:8080/WebAPI/DIKB/";
+    //var terms = document.getElementById("autoText").innerHTML;
+    //alert(terms);
+    $("input#autoText").autocomplete({
+
+        width: 300,
+        max: 10,
+        delay: 100,
+        minLength: 1,
+        autoFocus: true,
+        cacheLength: 1,
+        scroll: true,
+        highlight: false,
+        source: function(request, response) {
+            var query = request.term;
+            $.ajax({
+                url: restBaseUrl + "drug",
+            type: 'GET',
+            dataType: 'json',
+            data: request,
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data, textStatus, jqXHR) {
+                //var json = JSON.parse(data);
+                var items = [];
+                var tempitem = "Any";
+                var j = 0;
+                //alert(query);
+                items[0] = "Any";
+                for (var i = 1; i < data.length+1; i++) {
+                    items[i] = data[i-1].DRUG;
+                    //items[i+1] = tempitem[0];
+                }
+                //talert(request.term);
+                var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+                /*response( $.grep( items, function( item ){
+                    return matcher.test( item );
+                }) );*/
+
+                if(request.term == " ")
+                {
+                    response( $.grep( items, function( item ){
+                        return item;
+                    }) );
+                }else {
+                    response( $.grep( items, function( item ){
+                        return matcher.test( item );
+                    }) );
+                }
+            
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert("Something went wrong while getting Index list. Please try again.");
+            }
+
+            });
+        }
+ 
+    });
+});
+
+
+
+function strStartsWith(str, prefix) {
+    return str.indexOf(prefix) === 0;
+}
+
+function loadprecipitant(){
+  var inputObject = $('input#autoText').val();
+  //alert($('select[id="autoText"]').val());
+  //alert(inputObject);
+  $("input#precipitantName").autocomplete({
+      
+      width: 300,
+        max: 10,
+        delay: 100,
+        minLength: 1,
+        autoFocus: true,
+        cacheLength: 1,
+        scroll: true,
+        highlight: false,
+        source: function(request, response) {
+            var query = request.term;
+            $.ajax({
+                url: "http://localhost:8080/WebAPI/DIKB/precipitant/" + inputObject,
+            type: 'GET',
+            dataType: 'json',
+            data: request,
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data, textStatus, jqXHR) {
+                //var json = JSON.parse(data);
+                var items = [];
+                var tempitem = "Any";
+                var j = 0;
+                //alert(query);
+                //items[0] = "Any";
+                for (var i = 1; i < data.length+1; i++) {
+                    items[i] = data[i-1].DRUG;
+                    //items[i+1] = tempitem[0];
+                }
+                var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+                /*response( $.grep( items, function( item ){
+                    return matcher.test( item );
+                }) );*/
+                if(request.term == " ")
+                {
+                    response( $.grep( items, function( item ){
+                        return item;
+                    }) );
+                }else {
+                    response( $.grep( items, function( item ){
+                        return matcher.test( item );
+                    }) );
+                }
+
+            
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert("Something went wrong while getting Index list. Please try again.");
+            }
+                /*url: "/JSON/AjaxRequest",
+                dataType: "json",
+                data: request,
+                success: function( data, textStatus, jqXHR) {
+                    console.log( data);
+                    var items = data;
+                    response(items);
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                     console.log( textStatus);
+                }*/
+            });
+        }
+ 
+    });
+}
+    
+</script>
+    </head>
+
+
+    <body>
+
+      <div id="page1">
+            <header>
+                <h3 class="centered" style = "font-size:37px">DIKB Evidence Base</h3>
+            </header>		
+            <!--<div class="intro">
+                <p class = "lead" style = "font-size:16px"> A service provided by the University of Pittsburgh <a href="http://dikb.org">Drug Interaction Knowledge Base (DIKB)</a>
+		</p>
+	
+            </div>-->
+
+            <form name="as400samplecode" action="javascript:showbar();" method="get">
+                <div id="drugSelection1">			
+                    <div style="margin">
+                            <div class="bold centered" style="font-size:16px">
+                            Object &nbsp<input id="autoText" maxlength="20" value = "" onclick = "returnall()" defaultValue = "any" placeholder = "Any"/></div>
+                    </div>
+
+                </div>
+                
+                <!--<div id="drugSelection2">
+                    <div id="submitButton1">
+                      <br>
+                        <input id="findInteractionsSubmit" class="clear regButton1" type="submit" value="Search"/>
+                    </div>
+                    <div id="warningMessage" class="centered warning"></div>
+                </div>-->
+            
+                <div id="drugSelection2">     
+                    <div style="margin">
+                            <div class="bold centered" style="font-size:16px">
+                            Precipitant &nbsp<input id="precipitantName" onclick="loadprecipitant();" maxlength="20" value = "" defaultValue = "any" placeholder = "Any"/></div>
+                    </div>
+
+                </div>
+                
+                <div id="drugSelection2">
+                    <div id="submitButton1">
+                        <input id="findInteractionsSubmit" class="clear regButton1" type="submit" value="Search"/>
+                    </div>
+                    <div id="warningMessage" class="centered warning"></div>
+                </div>
+            </form>
+            <br>
+            <br>
+            <div class="test">
+              <div class="bold" style="font-size:16px;margin-left:150px" id="overview">Recent Evidence</div>
+    <div id="drugSelection1t">
+    <div id="timeline2"></div>
+  </div>
+    <div id="hoverRes" >
+      <div id="drugSelection2">
+
+      <div class="coloredDiv"></div>
+      <blockquote>
+      <div id="name" align="left"></div>
+      <div id="objectname" align="left" onclick = "showbar()"></div>
+      <div id="sourcetype" align="left"></div>
+      <div id="statement" align="left"></div>
+      <div id="scrolled_date"></div>
+        </blockquote>
+  </div>
+    </div>
+            </div>
+        </div>
+<br>
+<div class="firstpagemargin">
+
+<div id="figure" style="margin-bottom: 5px;"></div>
+
+<div class = "drugselected"></div>
+<div id = "here_table"></div>
+
+<script>
+
+function drawd3diagram(inputvalue,precipitantName){
+  $("#hoverRes").remove();
+  document.getElementById("overview").innerHTML = "";
+  d3.select("svg")
+  .remove();
+  d3.select("svg")
+  .remove();
+  $("#detailstable").remove();
+  var datalength;
+    var data1;
+    $.ajax({
+            
+            url: "http://localhost:8080/WebAPI/DIKB/source/"+inputvalue+"/"+precipitantName,
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+                //var json = JSON.parse(data);
+
+                datalength = data.length;
+                data1 = data;
+                //alert(data1[1].fullname);
+                var margin = {top: 70, right: 40, bottom: 10, left: 65},
+    width = 600 - margin.left - margin.right,
+    height = 105 - margin.top - margin.bottom;  //chart width
+
+var y = d3.scale.ordinal()
+    .rangeRoundBands([0, height], .3);
+
+var x = d3.scale.linear()
+    .rangeRound([0, width]);
+
+var color = d3.scale.ordinal()
+    .range(["#c7001e", "#f6a580", "#cccccc", "#92c6db", "#086fad", "#c7001e", "#f6a580"]); //color chunk
+
+var xAxis = d3.svg.axis() //y axis
+    .scale(x)
+    .orient("top");
+
+var yAxis = d3.svg.axis() //x axis
+    .scale(y)
+    .orient("left")
+
+var svg = d3.select("#figure").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("id", "d3-plot")
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+//alert(datalength);
+if(datalength == 1)
+{
+  color.domain([data1[0].name]);
+}
+if(datalength == 2)
+{
+  color.domain([data1[0].name, data1[1].name]);
+}
+if(datalength == 3)
+{
+  color.domain([data1[0].name, data1[1].name, data1[2].name]);
+}
+if(datalength == 4)
+{
+  color.domain([data1[0].name, data1[1].name, data1[2].name, data1[3].name]);
+}
+if(datalength == 5)
+{
+  color.domain([data1[0].name, data1[1].name, data1[2].name, data1[3].name, data1[4].name]);
+}
+if(datalength == 6)
+{
+  color.domain([data1[0].name, data1[1].name, data1[2].name, data1[3].name, data1[4].name, data1[5].name]);
+}
+  //d3.csv("raw_data.csv", function(error, data) {
+
+//------------------------loop parse csv-----------------------------
+data1.forEach(function(d) {
+        //d.date = parseDate(d.date);
+        //d.close = +d.close;
+    // calc percentages
+    /*d["Strongly disagree"] = +d[1]*100/d.N;
+    d["Disagree"] = +d[2]*100/d.N;
+    d["Neither agree nor disagree"] = +d[3]*100/d.N;
+    d["Agree"] = +d[4]*100/d.N;
+    d["Strongly agree"] = +d[5]*100/d.N;*/
+    /*d[data1[0].name] = +data1[0].value;
+    d[data1[1].name] = +data1[1].value;
+    d[data1[2].name] = +data1[2].value;
+    d[data1[3].name] = +data1[3].value;
+    d[data1[4].name] = +data1[4].value;
+    var x0 = -1*(d[data1[2].name]/2+d[data1[1].name]+d[data1[0].name]); //x0 axis*/
+    var x0 = 0;
+    var idx = 0;
+
+    d.boxes = color.domain().map(function(name) { return {fullname: data1[idx].fullname, name: name, x0: x0, x1: x0 += +data1[idx].value, n: +data1[idx++].value}; });
+  });
+
+  var min_val = d3.min(data, function(d) {
+          return d.boxes["0"].x0;
+          
+          });
+
+  var max_val = d3.max(data, function(d) {
+          return d.boxes[datalength-1].x1;
+          });
+
+  x.domain([min_val, max_val]).nice();
+  y.domain(data.map(function(d) { return d.Question; }));
+
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+
+  var vakken = svg.selectAll(".question")
+      .data(data)
+      .enter().append("g")
+      .attr("class", "bar")
+      .attr("transform", function(d) { return "translate(0," + y(d.Question) + ")"; });
+
+  var bars = vakken.selectAll("rect")
+      .data(function(d) { return d.boxes; })
+    .enter().append("g").attr("class", "subbar")
+     .on('mousedown', function(d) {showtable(d.name,d.fullname,precipitantName,inputvalue); this.style("font-size","30px")});
+
+
+//------------------------bar-----------------------------------d.x0, d.x1, d.name
+  bars.append("rect")
+      .attr("height", y.rangeBand())
+      .attr("x", function(d) { return x(d.x0); })
+      .attr("width", function(d) { return x(d.x1) - x(d.x0); })
+      .style("fill", function(d) { return color(d.name); });
+      //.addEventListener("click", test());
+
+
+
+//----------------------text on bar----------------------------d.x0, d.x1, d.n
+  bars.append("text")
+      .attr("x", function(d) { return x(d.x0); })
+      .attr("y", y.rangeBand()/2)
+      .attr("dy", "0.5em")
+      .attr("dx", "0.5em")
+      .style("font" ,"10px sans-serif")
+      .style("text-anchor", "begin")
+      .text(function(d) { return d.n !== 0 && (d.x1-d.x0)>0 ? d.n : "" });
+
+//----------------------bar background------------------------
+  vakken.insert("rect",":first-child")
+      .attr("height", y.rangeBand())
+      .attr("x", "1")
+      .attr("width", width)
+      .attr("fill-opacity", "0.5")
+      .style("fill", "#F5F5F5")
+      .attr("class", function(d,index) { return index%2==0 ? "even" : "uneven"; });
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .append("line")
+      .attr("x1", x(0))
+      .attr("x2", x(0))
+      .attr("y2", height);
+
+    svg.append("text")
+      .attr("x", -60)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "begin")
+      .style("font" ,"10px sans-serif")
+      .text(function(d) { return precipitantName; });
+
+//-------------------------legend-----------------------------
+  var startp = svg.append("g").attr("class", "legendbox").attr("id", "mylegendbox");
+  // this is not nice, we should calculate the bounding box and use that
+  var legend_tabs = [60, 45, 30, 15, 0, 100];
+  var legend = startp.selectAll(".legend")
+      .data(color.domain().slice())
+      .enter().append("g")
+      .attr("class", "legend")
+      //.attr("transform", function(d, i) { return "translate(" + legend_tabs[i] + ",-45)"; });
+      .attr("transform", function(d, i) { return "translate(0," + legend_tabs[i] + ")"; });
+
+  legend.append("rect")
+      .attr("x", 0)
+      .attr("width", 18)
+      .attr("height", 10)
+      .style("fill", color);
+
+
+
+  legend.append("text")
+      .attr("x", 22)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "begin")
+      .style("font" ,"10px sans-serif")
+      .text(function(d) { return d; });
+
+  d3.selectAll(".axis path")
+      .style("fill", "none")
+      .style("stroke", "#000")
+      .style("shape-rendering", "crispEdges")
+
+  d3.selectAll(".axis line")
+      .style("fill", "none")
+      .style("stroke", "#000")
+      .style("shape-rendering", "crispEdges")
+
+  var movesize = width/2 - startp.node().getBBox().width/2;
+  d3.selectAll(".legendbox").attr("transform", "translate(" + movesize  + ",-70)");
+
+
+//});
+            },
+            error: function(data) {
+                alert("Something went wrong while getting Index list. Please try again.");
+            }
+                
+            });
+}
+
+
+function showbar(){
+  $(".drugselected").text("");
+  $("#hoverRes").remove();
+  document.getElementById("overview").innerHTML = "";
+  //d3.select("#figure").removeChild();
+  d3.select("svg")
+  .remove();
+  $("#detailstable").remove();
+    var inputvalue = document.getElementById("autoText").value;
+    var precipitantName = document.getElementById("precipitantName").value;
+
+    if(inputvalue=="")
+      inputvalue = document.getElementById("objectname").text;
+    if(precipitantName=="") {
+      //alert(precipitantName);
+      $.ajax({
+            url: "http://localhost:8080/WebAPI/DIKB/precipitant/"+inputvalue,
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+                //var json = JSON.parse(data);
+                var length = 0;
+                //alert(data.length);
+                if(data.length>5)
+                    length = 5;
+                else
+                    length = data.length;
+                for (var i = 0;i < length; i++) {
+                    //alert(data[i].DRUG);
+                    //items[i+1] = tempitem[0];
+                    drawd3diagram(inputvalue,data[i].DRUG);
+                }
+                
+          //}) );
+            
+            },
+            error: function(data) {
+                alert("Something went wrong while getting Index list. Please try again.");
+            }
+                /*url: "/JSON/AjaxRequest",
+                dataType: "json",
+                data: request,
+                success: function( data, textStatus, jqXHR) {
+                    console.log( data);
+                    var items = data;
+                    response(items);
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                     console.log( textStatus);
+                }*/
+            });
+    }else{
+    //alert(inputvalue+precipitantName);
+    //alert(inputvalue);
+    //var data1;
+    drawd3diagram(inputvalue,precipitantName);
+  }
+//var data1 = [{"name":"Other","value":1},{"name":"EV_PK_DDI_Par_Grps","value":1},{"name":"EV_PK_DDI_RCT","value":1},{"name":"Non_traceable_Drug_Label_Statement","value":2},{"name":"Non_traceable_Drug","value":2}];
+
+
+}
+
+function showtable(clickname,clicksource,precipitantName,objectName){
+    var clicktext = clicksource;
+    $("#detailstable").remove();
+    //alert(clickname+","+clicksource+","+precipitantName+","+objectName);
+    $(".drugselected").text("Details: " + clickname+"-"+objectName+"-"+precipitantName);
+    var inputvalue = document.getElementById("autoText").value;
+    var table = $('<table id="detailstable" width="1000px" align="center"></table>');
+    var row = $('<tr></tr>');
+    var column  = $('<td>Predicate</td><td>Precipitant</td><td>Evidence Standpoint</td><td width="1200px">Evidence Content</td>');
+    $('#here_table').append(table);
+    row.append(column);
+    table.append(row);
+
+    //alert(inputvalue);
+    //var data1;
+    var datalength;
+    var data1;
+    //document.write("    <td valign = 'top'>Evidence Against</td>");
+    $.ajax({
+                
+            url: "http://localhost:8080/WebAPI/DIKB/search/" + inputvalue + "/" + precipitantName + "/" + clicksource,
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+              //alert(clicksource + data.length);
+              //alert(data[0].Object);
+                
+                for (var i = 0; i < data.length; i++) {
+                  var tempcolumn='';
+                  row = $('<tr bgcolor="#FFFFFF"></tr>');
+                  /*if(i == 0) {
+                    tempcolumn = "<td>" + clickname + "</td>";
+                    tempcolumn += "<td>" + data[i].Object + "</td>";
+                  }else{
+                    tempcolumn = "<td></td>";
+                    tempcolumn += "<td></td>"
+                  }*/
+
+                  if(i!=0)
+                  {
+                    if(data[i].assertType == data[i-1].assertType){
+                      tempcolumn += "<td></td>";
+                    }else{
+                      tempcolumn += "<td>" + data[i].assertType.replace("_"," ") + "</td>";
+                    }
+                  }else{
+                    tempcolumn += "<td>" + data[i].assertType.replace("_"," ") + "</td>";
+                  }
+                  //alert(tempcolumn);
+                  if(i!=0)  
+                  {
+                    if((data[i].Precipitant == data[i-1].Precipitant)&&(data[i].assertType == data[i-1].assertType)){
+                    tempcolumn += "<td></td>";
+                  }else{
+                    tempcolumn += "<td>" + data[i].Precipitant + "</td>";
+                  }
+                  }else{
+                    tempcolumn += "<td>" + data[i].Precipitant + "</td>";
+                  }
+
+
+                  
+
+                  
+                  if(data[i].evidenceRole == "support")
+                  {
+                    tempcolumn += "<td>Support</td>";
+                    tempcolumn += "<td bgcolor='#ECF5E1'  align='left' style='line-height:15px;padding-left:7px'>" + data[i].evidenceStatement.substring(0,350) + "...<br><a href='details.html?"+data[i].evidence+"'  target='_blank' color='blue'>More Details</a></td>";
+                  }else if(data[i].evidenceRole == "refute"){
+                    tempcolumn += "<td>Refute</td>";
+                    tempcolumn += "<td bgcolor='#F5E1E2' align='left' margin-left='10px' style='line-height:15px;padding-left:7px'>" + data[i].evidenceStatement.substring(0,350) + "...<br><a href='details.html?"+data[i].evidence+"' target='_blank' color='blue'>More Details</a></td>";
+                  }else{
+                    tempcolumn += "<td></td>";
+                    tempcolumn += "<td></td>";
+                  }
+                  
+                  column = tempcolumn;
+                  row.append(column);
+                  table.append(row);
+                  //alert(column);
+                  
+                }
+               },
+            error: function(data) {
+                alert("Something went wrong while getting Index list. Please try again.");
+            }
+                
+            });
+    
+  }
+
+  function test() {
+    alert("test");
+  }
+</script>
+      <!--<p>
+      <b style="font-size:22px">Download all 14 merged PDDI datasets</b><br>
+	<a style = "font-size:15px" href="https://dbmi-icode-01.dbmi.pitt.edu/dikb-evidence/pddi-sets/CombinedDatasetConservative.csv.zip">More conservative dataset</a>&nbsp;&nbsp;&nbsp;
+	<a style = "font-size:15px" href="https://dbmi-icode-01.dbmi.pitt.edu/dikb-evidence/pddi-sets/CombinedDatasetNotConservative.csv.zip">Less conservative dataset</a>
+      </p>
+<p class = "lead" style = "font-size:13px">
+More conservative is limited matches between a DrugBank and UNII record to those cases where an exact case-insensitive match was identified for both an InChI identifier and either the drug preferred term or synonym. 
+</p>
+
+<h5><b style="font-size:22px">Funding Acknowledgements</b></h5>
+<p class = "lead" style = "font-size:13px">This project is supported by a grant from the National Library of Medicine: "Addressing gaps in clinically useful evidence on drug-drug interactions"   (1R01LM011838-01)</p>
+
+
+<h5><b style="font-size:22px">Citations for PDDI sources </b></h5>
+
+<b style="font-size:15px">Five of the sources were developed for clinical application</b>
+<ul class = "lead" style = "text-align: left; font-size: 13px;">
+<li>Credimeds: a list of PDDIs thought to be clinically relevant and supported by strong scientific evidence
+
+ “Crediblemeds.org,” 05-Oct-2013. [Online]. Available: http://www.crediblemeds.org/.[Accessed: 05-Oct-2013].  
+</li>
+
+
+</ul>
+
+<b style="font-size:15px">Four of the sources were developed to support NLP algorithm development</b>
+<ul class = "lead" style = "text-align: left; font-size: 13px;">
+<li>DDI Corpus 2011 - the reference standard for the 2011 SemEval Challenge on drug-drug interaction NLP
+
+I. Segura-Bedmar, P. Martınez, and D. Sánchez-Cisneros, “The 1st DDIExtraction-2011
+challenge task: Extraction of Drug-Drug Interactions from biomedical texts,” 2011
+</li>
+
+</ul>
+
+<BR>-->
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+<h5>License</h5>
+<div class = "lead" style = "font-size:13px">
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a><br/>
+<span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Dataset" property="dct:title" rel="dct:type">Drug Interaction Knowledge Base (DIKB)</span> 
+by <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.dbmi.pitt.edu/person/richard-boyce-phd" property="cc:attributionName" rel="cc:attributionURL">Richard D. Boyce</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.
+</div>
+
+<font size="-5"  color="#999999">
+
+<h5 style = "font-size: 13px;"><bold>MEDICAL DISCLAIMER</bold></h5>
+
+<p class = "footerp">
+<b>No advice</b>
+This website contains general information about medical conditions and treatments.  The information is not advice, and should not be treated as such.
+
+<b>Limitation of warranties</b>
+
+The medical information on this website is provided "as is" without any representations or warranties, express or implied. Neither the author (Richard Boyce) or the University of Pittsburgh make any representations or warranties in relation to the medical information on this website.
+
+Without prejudice to the generality of the foregoing paragraph, Neither the author (Richard Boyce) or the University of Pittsburgh warrant that:</p>
+
+<ul>
+  <li style = "margin-top: -18px;font-weight: 400">the medical information on this website will be constantly available, or available at all;</li>
+
+  <li style = "margin-top: -4px;font-weight: 400">the medical information on this website is complete, true, accurate, up-to-date, or non-misleading.</li>
+</ul>
+<p class = "footerp" style = "margin-top: -18px">
+<b>Professional assistance</b>
+
+You must not rely on the information on this website as an alternative to medical advice from your doctor or other professional healthcare provider.
+
+If you have any specific questions about any medical matter you should consult your doctor or other professional healthcare provider.
+If you think you may be suffering from any medical condition you should seek immediate medical attention.
+You should never delay seeking medical advice, disregard medical advice, or discontinue medical treatment because of information on this website.
+
+<br>
+<b>Liability</b>
+<BR>
+Nothing in this medical disclaimer will limit any of our liabilities in any way that is not permitted under applicable law, or exclude any of our liabilities that may not be excluded under applicable law.
+<BR>
+<b>About this medical disclaimer</b>
+<BR>
+We created this <a href="http://www.freenetlaw.com/free-medical-disclaimer/">medical disclaimer</a> with the help of a Contractology precedent available at www.freenetlaw.com.
+    Premium templates available from Contractology include <a href="http://www.contractology.com/precedents/non-disclosure-agreement.html">confidential disclosure agreement forms</a>.
+
+
+</p>
+</font>
+<a href="#0" class="cd-top">Top</a>
+<HR>
+<div text-align = "center">
+<IMG style = "float: left; margin-right: 65px;" src="images/logo.png" alt="logo.png" align="top" width = "140px" height = "140px">
+<FONT SIZE="-1"><br>Copyright &#169 2015 - 2016 Richard D. Boyce<BR>All Rights Reserved<BR>
+</FONT>
+<br>
+<br>
+</div>
+</div>
+<hr>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+    <head>
+        <title>DIKB Evidence Base</title>
+        <link rel="stylesheet" type="text/css" href="css/ddistyle.css" />
+        <meta charset="UTF-8">
+        <script src="js/jquery-1.11.1.min.js"></script>
+        <link href="css/listbox.css" rel="stylesheet" />
+        <link href="css/BacktoTop.css" rel="stylesheet" />
+        <link href="css/flat-ui.min.css" rel="stylesheet"/>
+        <link href="css/demo.css" rel="stylesheet"/>
+		<script src="js/modernizr.js"></script>
+        <script src="js/listbox.js"></script>
+		<script src="js/main.js"></script>
+	    <link rel="stylesheet" href="css/jquery-dialog-ui.css">
+	    <script src="js/jquery-ui.js"></script>
+        
+        <STYLE TYPE="text/css" media="all">
+        
+        </STYLE>
+
+        
+  <script type="text/javascript">
+    window.onload = function() {
+        var evidenceID = unescape((''+self.location.search).substring(1));
+        $.ajax({
+                
+            url: "http://localhost:8080/WebAPI/DIKB/evidenceDetails/"+evidenceID,
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+                for (var i = 0; i < data.length; i++) {
+                    var title = $("<div>Evidence "+evidenceID+"</div>");
+                    if(data[i].evidenceRole == "support")
+                    {
+                        var label = $("<div style='color:green;float:left' ><b>"+data[i].evidenceRole.toUpperCase()+": </b></div><div> "+ data[i].label+"</div>");
+                    }else
+                    {
+                        var label = $("<div style='color:red;float:left' ><b>"+data[i].evidenceRole.toUpperCase()+": </b></div><div> "+ data[i].label+"</div>");
+                    }
+                    var table = $("<table id='detailstable'></table>");
+                    $(".test").append(title);
+                    $(".test").append(label);
+                    $(".test").append(table);
+                    var numSub = $("<tr bgcolor='#FFFFFF'><td width='100px' >Number of Subjects</td><td style='text-align:left'>"+data[i].numOfSubjects+"</td></tr>");
+                    $("#detailstable").append(numSub);
+                    var objectDose = $("<tr bgcolor='#FFFFFF'><td>Object Dose</td><td style='text-align:left'>"+data[i].objectDose+"</td></tr>");
+                    $("#detailstable").append(objectDose);
+                    var precipDose = $("<tr bgcolor='#FFFFFF'><td>Precipitant Dose</td><td style='text-align:left'>"+data[i].precipDose+"</td></tr>");
+                    $("#detailstable").append(precipDose);
+                    var tag = $("<tr bgcolor='#FFFFFF'><td>Evidence Type</td><td style='text-align:left'>"+data[i].tag+"</td></tr>");
+                    $("#detailstable").append(tag);
+                    var evidenceVal = $("<tr bgcolor='#FFFFFF'><td>Evidence Value</td><td style='text-align:left'>"+data[i].evidenceVal+"</td></tr>");
+                    $("#detailstable").append(evidenceVal);
+                    var asrt = $("<tr bgcolor='#FFFFFF'><td>Assertion</td><td style='text-align:left'><a href='"+data[i].asrt+"' target='_blank' color='blue'>"+data[i].asrt+"</a></td></tr>");
+                    $("#detailstable").append(asrt);
+                    var statement = $("<tr bgcolor='#FFFFFF'><td>Content</td><td style='text-align:left'>"+data[i].evidenceStatement+"</td></tr>");
+                    $("#detailstable").append(statement);
+                    var who = $("<tr bgcolor='#FFFFFF'><td>Creator</td><td style='text-align:left'>"+data[i].whoAnnotated+"</td></tr>");
+                    $("#detailstable").append(who);
+                    var date = $("<tr bgcolor='#FFFFFF'><td>Date</td><td style='text-align:left'>"+data[i].dateAnnotated+"</td></tr>");
+                    $("#detailstable").append(date);
+                    var evidenceLab = $("<tr bgcolor='#FFFFFF'><td>Evidence Label</td><td style='text-align:left'><a href='"+data[i].evidence+"' target='_blank' color='blue'>"+data[i].evidence+"</a></td></tr>");
+                    $("#detailstable").append(evidenceLab);
+                    var seealso = $("<tr bgcolor='#FFFFFF'><td>See Also</td><td style='text-align:left'><a href='"+data[i].evidenceSource+"' target='_blank' color='blue'>"+data[i].evidenceSource+"</a></td></tr>");
+                    $("#detailstable").append(seealso);
+                }
+            },
+            error: function(textStatus, errorThrown) {
+                alert("Something went wrong while getting Index list. Please try again.");
+            }
+        });
+  }
+    
+</script>
+    </head>
+
+
+    <body>
+
+      <div id="page1">
+
+            <h3 class="centered" style = "font-size:37px">DIKB Evidence Base</h3>
+	
+            <div style="font-size:16px;margin-left:150px;margin-right:150px" class="test">
+            
+    
+    
+            </div>
+    
+
+    </div>
+
+
+
+
+<div class="firstpagemargin">
+  <br>
+  <br>
+  <br>
+  <br>
+<h5>License</h5>
+<div class = "lead" style = "font-size:13px">
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a><br/>
+<span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Dataset" property="dct:title" rel="dct:type">Drug Interaction Knowledge Base (DIKB)</span> 
+by <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.dbmi.pitt.edu/person/richard-boyce-phd" property="cc:attributionName" rel="cc:attributionURL">Richard D. Boyce</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.
+</div>
+
+<font size="-5"  color="#999999">
+
+<h5 style = "font-size: 13px;"><bold>MEDICAL DISCLAIMER</bold></h5>
+
+<p class = "footerp">
+<b>No advice</b>
+This website contains general information about medical conditions and treatments.  The information is not advice, and should not be treated as such.
+
+<b>Limitation of warranties</b>
+
+The medical information on this website is provided "as is" without any representations or warranties, express or implied. Neither the author (Richard Boyce) or the University of Pittsburgh make any representations or warranties in relation to the medical information on this website.
+
+Without prejudice to the generality of the foregoing paragraph, Neither the author (Richard Boyce) or the University of Pittsburgh warrant that:</p>
+
+<ul>
+  <li style = "margin-top: -18px;font-weight: 400">the medical information on this website will be constantly available, or available at all;</li>
+
+  <li style = "margin-top: -4px;font-weight: 400">the medical information on this website is complete, true, accurate, up-to-date, or non-misleading.</li>
+</ul>
+<p class = "footerp" style = "margin-top: -18px">
+<b>Professional assistance</b>
+
+You must not rely on the information on this website as an alternative to medical advice from your doctor or other professional healthcare provider.
+
+If you have any specific questions about any medical matter you should consult your doctor or other professional healthcare provider.
+If you think you may be suffering from any medical condition you should seek immediate medical attention.
+You should never delay seeking medical advice, disregard medical advice, or discontinue medical treatment because of information on this website.
+
+<br>
+<b>Liability</b>
+<BR>
+Nothing in this medical disclaimer will limit any of our liabilities in any way that is not permitted under applicable law, or exclude any of our liabilities that may not be excluded under applicable law.
+<BR>
+<b>About this medical disclaimer</b>
+<BR>
+We created this <a href="http://www.freenetlaw.com/free-medical-disclaimer/">medical disclaimer</a> with the help of a Contractology precedent available at www.freenetlaw.com.
+    Premium templates available from Contractology include <a href="http://www.contractology.com/precedents/non-disclosure-agreement.html">confidential disclosure agreement forms</a>.
+
+
+</p>
+</font>
+<a href="#0" class="cd-top">Top</a>
+<HR>
+<div text-align = "center">
+<IMG style = "float: left; margin-right: 65px;" src="images/logo.png" alt="logo.png" align="top" width = "140px" height = "140px">
+<FONT SIZE="-1"><br>Copyright &#169 2015 - 2016 Richard D. Boyce<BR>All Rights Reserved<BR>
+</FONT>
+<br>
+<br>
+</div>
+</div>
+<hr>
+</body>
+</html>
