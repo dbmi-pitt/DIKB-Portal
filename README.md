@@ -6,7 +6,3 @@ This project is for the web front end that connects to the OHDSI WebAPI customiz
 TODO: explain how to configure and deploy this project
 
 
-# PostgreSQL 
-
-export postgresDB table
-$ pg_dump -h localhost -p 5432 -U user -W --table="table-name" --column-inserts database-name > table.sql

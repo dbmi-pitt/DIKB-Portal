@@ -1,0 +1,12 @@
+# PostgreSQL 
+
+(1) dump table in sql
+$ pg_dump -h localhost -p 5432 -U user -W --table="table-name" --column-inserts database-name > table.sql
+
+(2) load table with inserts in sql
+$ psql \
+  -h localhost \
+  -p 5432 \
+  -U user \
+  database-name \
+  -f table.sql
