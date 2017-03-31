@@ -85,13 +85,18 @@
       height:20px; width:20px;
     }
   </style>
-  <script type="text/javascript">
-    window.onload = function() {
-var testData = [];
-      //alert(testData[0].label);
-      $.ajax({
+    <script type="text/javascript">
+
+
+window.onload = function() {
+    // call webapi for 5 recent assertions
+    // Note: multiple assertions with same date will overlapping on timeline
+    
+	var testData = [];
+	//alert(testData[0].label);
+	$.ajax({
                 
-            url: "http://localhost:8080/WebAPI/DIKB/recent/5",
+            url: "http://localhost:8090/WebAPI/DIKB/POSTGRES-DIKB/recent/5",
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
@@ -106,23 +111,23 @@ var testData = [];
                     //if(testData[i].times[0].starting_time)
                     //testData[1].times[0].starting_time = testData[1].times[0].starting_time - 2000000;
                     //testData[1].times[0].ending_time = testData[1].times[0].ending_time - 2000000;
-
                     //items[i+1] = tempitem[0];
                 }
 
-      var width = 500;
-      
-
-      function timelineCircle() {
+		var width = 500;
+		timelineCircle();
+		// based on timeline, listing mot recent DDI assertions
+		// 
+		function timelineCircle() {
         
-        var chart = d3.timeline()
-          .tickFormat( //
-            {format: d3.time.format("%I %p"),
+		    var chart = d3.timeline()
+			.tickFormat( //
+			    {format: d3.time.format("%I %p"),
             tickTime: d3.time.hours,
             tickInterval: 1,
             tickSize: 30})
           .display("circle")
-          .hover(function (d, i, datum) {
+          .hover(function (d, i, datum) { // mouse over event
           // d is the current rendering object
           // i is the index during d3 rendering
           // datum is the id object
@@ -144,13 +149,10 @@ var testData = [];
             //alert(datum.label);
           }); // toggle between rectangles and circles
           
-
-        var svg = d3.select("#timeline2").append("svg").attr("width", width)
-          .datum(testData).call(chart);
-      }
-      
-      timelineCircle();
-
+		    
+		    var svg = d3.select("#timeline2").append("svg").attr("width", width)
+			.datum(testData).call(chart);
+		}
       },
             error: function(data) {
                 alert("Something went wrong while getting Index list. Please try again.");
@@ -161,13 +163,12 @@ var testData = [];
     }
 
 
-$(document).ready(function() {
-
-
-    var restBaseUrl = "http://localhost:8080/WebAPI/DIKB/";
+$(document).ready(function() { // type in 1st drug, auto complete 
+    
+    var restBaseUrl = "http://localhost:8090/WebAPI/DIKB/POSTGRES-DIKB/";
     //var terms = document.getElementById("autoText").innerHTML;
     //alert(terms);
-    $("input#autoText").autocomplete({
+    $("input#autoText").autocomplete({ 
 
         width: 300,
         max: 10,
@@ -181,37 +182,37 @@ $(document).ready(function() {
             var query = request.term;
             $.ajax({
                 url: restBaseUrl + "drug",
-            type: 'GET',
-            dataType: 'json',
-            data: request,
-            contentType: "application/json",
-            crossDomain: true,
-            success: function(data, textStatus, jqXHR) {
-                //var json = JSON.parse(data);
-                var items = [];
-                var tempitem = "Any";
-                var j = 0;
-                //alert(query);
-                items[0] = "Any";
-                for (var i = 1; i < data.length+1; i++) {
-                    items[i] = data[i-1].DRUG;
-                    //items[i+1] = tempitem[0];
-                }
-                //talert(request.term);
-                var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
-                /*response( $.grep( items, function( item ){
-                    return matcher.test( item );
-                }) );*/
-
-                if(request.term == " ")
-                {
-                    response( $.grep( items, function( item ){
-                        return item;
-                    }) );
-                }else {
-                    response( $.grep( items, function( item ){
-                        return matcher.test( item );
-                    }) );
+		type: 'GET',
+		dataType: 'json',
+		data: request,
+		contentType: "application/json",
+		crossDomain: true,
+		success: function(data, textStatus, jqXHR) {
+                    //var json = JSON.parse(data);
+                    var items = [];
+                    var tempitem = "Any";
+                    var j = 0;
+                    //alert(query);
+                    items[0] = "Any";
+                    for (var i = 1; i < data.length+1; i++) {
+			items[i] = data[i-1].DRUG;
+			//items[i+1] = tempitem[0];
+                    }
+                    //talert(request.term);
+                    var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+                    /*response( $.grep( items, function( item ){
+                      return matcher.test( item );
+                      }) );*/
+		    
+                    if(request.term == " ")
+                    {
+			response( $.grep( items, function( item ){
+                            return item;
+			}) );
+                    }else {
+			response( $.grep( items, function( item ){
+                            return matcher.test( item );
+			}) );
                 }
             
             },
@@ -221,7 +222,7 @@ $(document).ready(function() {
 
             });
         }
- 
+	
     });
 });
 
@@ -231,11 +232,11 @@ function strStartsWith(str, prefix) {
     return str.indexOf(prefix) === 0;
 }
 
-function loadprecipitant(){
+function loadprecipitant(){ // 2nd drug auto complete, Note: may have problems when triggering auto complete
   var inputObject = $('input#autoText').val();
   //alert($('select[id="autoText"]').val());
   //alert(inputObject);
-  $("input#precipitantName").autocomplete({
+    $("input#precipitantName").autocomplete({
       
       width: 300,
         max: 10,
@@ -248,7 +249,7 @@ function loadprecipitant(){
         source: function(request, response) {
             var query = request.term;
             $.ajax({
-                url: "http://localhost:8080/WebAPI/DIKB/precipitant/" + inputObject,
+                url: "http://localhost:8090/WebAPI/DIKB/POSTGRES-DIKB/precipitant/" + inputObject,
             type: 'GET',
             dataType: 'json',
             data: request,
@@ -309,25 +310,26 @@ function loadprecipitant(){
     <body>
 
       <div id="page1">
-            <header>
-                <h3 class="centered" style = "font-size:37px">DIKB Evidence Base</h3>
-            </header>		
-            <!--<div class="intro">
-                <p class = "lead" style = "font-size:16px"> A service provided by the University of Pittsburgh <a href="http://dikb.org">Drug Interaction Knowledge Base (DIKB)</a>
-		</p>
+        <header>
+          <h3 class="centered" style = "font-size:37px">DIKB Evidence Base</h3>
+        </header>		
+        <!--<div class="intro">
+            <p class = "lead" style = "font-size:16px"> A service provided by the University of Pittsburgh <a href="http://dikb.org">Drug Interaction Knowledge Base (DIKB)</a>
+	    </p>
+	    
+        </div>-->
 	
-            </div>-->
-
-            <form name="as400samplecode" action="javascript:showbar();" method="get">
-                <div id="drugSelection1">			
-                    <div style="margin">
-                            <div class="bold centered" style="font-size:16px">
-                            Object &nbsp<input id="autoText" maxlength="20" value = "" onclick = "returnall()" defaultValue = "any" placeholder = "Any"/></div>
-                    </div>
-
-                </div>
+	<form name="as400samplecode" action="javascript:showbar();" method="get">
+	  <div id="drugSelection1">			
+	    <div style="margin">
+	      <div class="bold centered" style="font-size:16px">
+		Object &nbsp<input id="autoText" maxlength="20" value = "" defaultValue = "any" placeholder = "Any"/></div>
+	      <!-- onclick = "returnall()" -->
+            </div>
+	    
+          </div>
                 
-                <!--<div id="drugSelection2">
+		<!--<div id="drugSelection2">
                     <div id="submitButton1">
                       <br>
                         <input id="findInteractionsSubmit" class="clear regButton1" type="submit" value="Search"/>
@@ -394,7 +396,7 @@ function drawd3diagram(inputvalue,precipitantName){
     var data1;
     $.ajax({
             
-            url: "http://localhost:8080/WebAPI/DIKB/source/"+inputvalue+"/"+precipitantName,
+            url: "http://localhost:8090/WebAPI/DIKB/POSTGRES-DIKB/evidencetype/"+inputvalue+"/"+precipitantName,
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
@@ -605,7 +607,7 @@ data1.forEach(function(d) {
 }
 
 
-function showbar(){
+function showbar(){ // show all assertions by type in bar
   $(".drugselected").text("");
   $("#hoverRes").remove();
   document.getElementById("overview").innerHTML = "";
@@ -621,7 +623,7 @@ function showbar(){
     if(precipitantName=="") {
       //alert(precipitantName);
       $.ajax({
-            url: "http://localhost:8080/WebAPI/DIKB/precipitant/"+inputvalue,
+            url: "http://localhost:8090/WebAPI/DIKB/POSTGRES-DIKB/precipitant/"+inputvalue,
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
@@ -669,7 +671,7 @@ function showbar(){
 
 }
 
-function showtable(clickname,clicksource,precipitantName,objectName){
+function showtable(clickname,clicksource,precipitantName,objectName){ // based on two drugs, list details of assertion with grouped evidence
     var clicktext = clicksource;
     $("#detailstable").remove();
     //alert(clickname+","+clicksource+","+precipitantName+","+objectName);
@@ -689,7 +691,7 @@ function showtable(clickname,clicksource,precipitantName,objectName){
     //document.write("    <td valign = 'top'>Evidence Against</td>");
     $.ajax({
                 
-            url: "http://localhost:8080/WebAPI/DIKB/search/" + inputvalue + "/" + precipitantName + "/" + clicksource,
+            url: "http://localhost:8090/WebAPI/DIKB/POSTGRES-DIKB/search/" + inputvalue + "/" + precipitantName + "/" + clicksource,
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
@@ -708,7 +710,7 @@ function showtable(clickname,clicksource,precipitantName,objectName){
                     tempcolumn = "<td></td>";
                     tempcolumn += "<td></td>"
                   }*/
-
+		    // generate table in html
                   if(i!=0)
                   {
                     if(data[i].assertType == data[i-1].assertType){
@@ -731,10 +733,6 @@ function showtable(clickname,clicksource,precipitantName,objectName){
                     tempcolumn += "<td>" + data[i].Precipitant + "</td>";
                   }
 
-
-                  
-
-                  
                   if(data[i].evidenceRole == "support")
                   {
                     tempcolumn += "<td>Support</td>";
