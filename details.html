@@ -26,7 +26,7 @@
         var evidenceID = unescape((''+self.location.search).substring(1));
         $.ajax({
                 
-            url: "http://localhost:8080/WebAPI/DIKB/evidenceDetails/"+evidenceID,
+            url: "http://localhost:8090/WebAPI/DIKB/POSTGRES-DIKB/evidenceDetails/"+evidenceID,
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
