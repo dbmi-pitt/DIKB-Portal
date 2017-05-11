@@ -1,0 +1,63 @@
+#drugSelection1{
+    display:block;
+    float:left;
+    padding: 5px;
+    margin-left: 360px;
+    align: center;
+}
+#drugSelection1t{
+    display:block;
+    float:left;
+    padding: 5px;
+    margin-left: 140px;
+    align: center;
+}
+#drugSelection2{
+    display:block;
+    float:left;
+    padding: 5px;
+    margin-left: 30px;
+}
+.ui-autocomplete { 
+    position: absolute; 
+    cursor: default; 
+    height: 200px; 
+    width: 180px;
+    overflow-y: scroll; 
+    overflow-x: hidden;
+    font-size: 13px;
+}
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+#figure {
+    font: 10px sans-serif;
+}
+
+
+
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 10px;
+}
+
+.timeline-label {
+    font-family: sans-serif;
+    font-size: 12px;
+}
+
+#timeline2 .axis {
+    transform: translate(0px,40px);
+    -ms-transform: translate(0px,40px); /* IE 9 */
+    -webkit-transform: translate(0px,40px); /* Safari and Chrome */
+    -o-transform: translate(0px,40px); /* Opera */
+    -moz-transform: translate(0px,40px); /* Firefox */
+}
+
+.coloredDiv {
+    height:20px; width:20px;
+}

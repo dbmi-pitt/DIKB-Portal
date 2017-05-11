@@ -1,309 +1,39 @@
 <!DOCTYPE html>
     <head>
         <title>DIKB Evidence Base</title>
-        <link rel="stylesheet" type="text/css" href="css/ddistyle.css" />
+
         <meta charset="UTF-8">
         <script src="js/jquery-1.11.1.min.js"></script>
         <link href="css/listbox.css" rel="stylesheet" />
         <link href="css/BacktoTop.css" rel="stylesheet" />
         <link href="css/flat-ui.min.css" rel="stylesheet"/>
-        <link href="css/demo.css" rel="stylesheet"/>
-		<script src="js/modernizr.js"></script>
-        <script src="js/listbox.js"></script>
-		<script src="js/main.js"></script>
-	    <link rel="stylesheet" href="css/jquery-dialog-ui.css">
-	    <script src="js/jquery-ui.js"></script>
+	
+	<script src="js/modernizr.js"></script>
+	<script src="js/listbox.js"></script>
+	<script src="js/main.js"></script>
+
+	<script src="js/jquery-ui.js"></script>
         <script src="js/d3.min.js"></script>
         <script src="js/d3-timeline.js"></script>
         
         <script src="http://code.jquery.com/jquery-1.7.js" type="text/javascript"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js" type="text/javascript"></script>
-        <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
-        <STYLE TYPE="text/css" media="all">
-        #drugSelection1{
-    display:block;
-    float:left;
-    padding: 5px;
-    margin-left: 360px;
-    align: center;
-}
-#drugSelection1t{
-    display:block;
-    float:left;
-    padding: 5px;
-    margin-left: 140px;
-    align: center;
-}
-#drugSelection2{
-    display:block;
-    float:left;
-    padding: 5px;
-    margin-left: 30px;
-
-}
-            .ui-autocomplete { 
-                position: absolute; 
-                cursor: default; 
-                height: 200px; 
-                width: 180px;
-                overflow-y: scroll; 
-                overflow-x: hidden;
-                font-size: 13px;
-            }
-            .axis path,
-            .axis line {
-                fill: none;
-                stroke: #000;
-                shape-rendering: crispEdges;
-            }
-            #figure {
-                font: 10px sans-serif;
-            }
-        </STYLE>
-
-        <style type="text/css">
-
-    .axis text {
-      font-family: sans-serif;
-      font-size: 10px;
-    }
-
-    .timeline-label {
-      font-family: sans-serif;
-      font-size: 12px;
-    }
-
-    #timeline2 .axis {
-      transform: translate(0px,40px);
-      -ms-transform: translate(0px,40px); /* IE 9 */
-      -webkit-transform: translate(0px,40px); /* Safari and Chrome */
-      -o-transform: translate(0px,40px); /* Opera */
-      -moz-transform: translate(0px,40px); /* Firefox */
-    }
-    
-    .coloredDiv {
-      height:20px; width:20px;
-    }
-  </style>
-    <script type="text/javascript">
-
-
-window.onload = function() {
-    // call webapi for 5 recent assertions
-    // Note: multiple assertions with same date will overlapping on timeline
-    
-	var testData = [];
-	//alert(testData[0].label);
-	$.ajax({
-                
-            url: "http://localhost:8090/WebAPI/DIKB/POSTGRES-DIKB/recent/5",
-            type: 'GET',
-            dataType: 'json',
-            contentType: "application/json",
-            crossDomain: true,
-            success: function(data) {
-              
-                var j = 0;
-                //alert(query);
-                for (var i = 0; i < data.length; i++) {
-                    testData[i] = data[i];
-                    testData[i].label = "";
-                    //if(testData[i].times[0].starting_time)
-                    //testData[1].times[0].starting_time = testData[1].times[0].starting_time - 2000000;
-                    //testData[1].times[0].ending_time = testData[1].times[0].ending_time - 2000000;
-                    //items[i+1] = tempitem[0];
-                }
-
-		var width = 500;
-		timelineCircle();
-		// based on timeline, listing mot recent DDI assertions
-		// 
-		function timelineCircle() {
-        
-		    var chart = d3.timeline()
-			.tickFormat( //
-			    {format: d3.time.format("%I %p"),
-            tickTime: d3.time.hours,
-            tickInterval: 1,
-            tickSize: 30})
-          .display("circle")
-          .hover(function (d, i, datum) { // mouse over event
-          // d is the current rendering object
-          // i is the index during d3 rendering
-          // datum is the id object
-            var div = $('#hoverRes');
-            var colors = chart.colors();
-            div.find('blockquote').css('border-left', "10px solid "+colors(i));
-            div.find('blockquote').css('box-shadow', "2px 2px 15px #ccc");
-            div.find('blockquote').css('width', "350px");
-            var tempcontent = '';
-            tempcontent = "<a href='"+ datum.evidence + "' target='_blank'>More Details</a>";
-            div.find('#objectname').text("Time: "+datum.dateAnnotated);
-            div.find('#sourcetype').text("SourceType: "+datum.name);
-            div.find('#name').text(datum.evidenceRole+ ": "+datum.researchStatementLabel+'\n');
-            $('#statement').empty();
-            $('#statement').append(tempcontent);
-            //$('#statement').text(datum.evidence);
-          })
-          .click(function (d, i, datum) {
-            //alert(datum.label);
-          }); // toggle between rectangles and circles
-          
-		    
-		    var svg = d3.select("#timeline2").append("svg").attr("width", width)
-			.datum(testData).call(chart);
-		}
-      },
-            error: function(data) {
-                alert("Something went wrong while getting Index list. Please try again.");
-            }
-                
-            });
-      
-    }
-
-
-$(document).ready(function() { // type in 1st drug, auto complete 
-    
-    var restBaseUrl = "http://localhost:8090/WebAPI/DIKB/POSTGRES-DIKB/";
-    //var terms = document.getElementById("autoText").innerHTML;
-    //alert(terms);
-    $("input#autoText").autocomplete({ 
-
-        width: 300,
-        max: 10,
-        delay: 100,
-        minLength: 1,
-        autoFocus: true,
-        cacheLength: 1,
-        scroll: true,
-        highlight: false,
-        source: function(request, response) {
-            var query = request.term;
-            $.ajax({
-                url: restBaseUrl + "drug",
-		type: 'GET',
-		dataType: 'json',
-		data: request,
-		contentType: "application/json",
-		crossDomain: true,
-		success: function(data, textStatus, jqXHR) {
-                    //var json = JSON.parse(data);
-                    var items = [];
-                    var tempitem = "Any";
-                    var j = 0;
-                    //alert(query);
-                    items[0] = "Any";
-                    for (var i = 1; i < data.length+1; i++) {
-			items[i] = data[i-1].DRUG;
-			//items[i+1] = tempitem[0];
-                    }
-                    //talert(request.term);
-                    var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
-                    /*response( $.grep( items, function( item ){
-                      return matcher.test( item );
-                      }) );*/
-		    
-                    if(request.term == " ")
-                    {
-			response( $.grep( items, function( item ){
-                            return item;
-			}) );
-                    }else {
-			response( $.grep( items, function( item ){
-                            return matcher.test( item );
-			}) );
-                }
-            
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                alert("Something went wrong while getting Index list. Please try again.");
-            }
-
-            });
-        }
+	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
 	
-    });
-});
+	<link rel="stylesheet" href="css/jquery-dialog-ui.css">
+	<link rel="stylesheet" type="text/css" href="css/ddistyle.css" />
+	<link href="css/demo.css" rel="stylesheet"/>
+	<link rel="stylesheet" href="css/ddihome.css">
 
+	<script src="js/ddihome.js"></script>
 
+	<script type="text/javascript">
 
-function strStartsWith(str, prefix) {
-    return str.indexOf(prefix) === 0;
-}
+	  $(document).ready(function() { 
+	      autoCompleteObjectName();
+	  });
 
-function loadprecipitant(){ // 2nd drug auto complete, Note: may have problems when triggering auto complete
-  var inputObject = $('input#autoText').val();
-  //alert($('select[id="autoText"]').val());
-  //alert(inputObject);
-    $("input#precipitantName").autocomplete({
-      
-      width: 300,
-        max: 10,
-        delay: 100,
-        minLength: 1,
-        autoFocus: true,
-        cacheLength: 1,
-        scroll: true,
-        highlight: false,
-        source: function(request, response) {
-            var query = request.term;
-            $.ajax({
-                url: "http://localhost:8090/WebAPI/DIKB/POSTGRES-DIKB/precipitant/" + inputObject,
-            type: 'GET',
-            dataType: 'json',
-            data: request,
-            contentType: "application/json",
-            crossDomain: true,
-            success: function(data, textStatus, jqXHR) {
-                //var json = JSON.parse(data);
-                var items = [];
-                var tempitem = "Any";
-                var j = 0;
-                //alert(query);
-                //items[0] = "Any";
-                for (var i = 1; i < data.length+1; i++) {
-                    items[i] = data[i-1].DRUG;
-                    //items[i+1] = tempitem[0];
-                }
-                var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
-                /*response( $.grep( items, function( item ){
-                    return matcher.test( item );
-                }) );*/
-                if(request.term == " ")
-                {
-                    response( $.grep( items, function( item ){
-                        return item;
-                    }) );
-                }else {
-                    response( $.grep( items, function( item ){
-                        return matcher.test( item );
-                    }) );
-                }
-
-            
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                alert("Something went wrong while getting Index list. Please try again.");
-            }
-                /*url: "/JSON/AjaxRequest",
-                dataType: "json",
-                data: request,
-                success: function( data, textStatus, jqXHR) {
-                    console.log( data);
-                    var items = data;
-                    response(items);
-                },
-                error: function(jqXHR, textStatus, errorThrown){
-                     console.log( textStatus);
-                }*/
-            });
-        }
- 
-    });
-}
-    
-</script>
+	</script>
     </head>
 
 
@@ -313,11 +43,6 @@ function loadprecipitant(){ // 2nd drug auto complete, Note: may have problems w
         <header>
           <h3 class="centered" style = "font-size:37px">DIKB Evidence Base</h3>
         </header>		
-        <!--<div class="intro">
-            <p class = "lead" style = "font-size:16px"> A service provided by the University of Pittsburgh <a href="http://dikb.org">Drug Interaction Knowledge Base (DIKB)</a>
-	    </p>
-	    
-        </div>-->
 	
 	<form name="as400samplecode" action="javascript:showbar();" method="get">
 	  <div id="drugSelection1">			
@@ -340,7 +65,7 @@ function loadprecipitant(){ // 2nd drug auto complete, Note: may have problems w
                 <div id="drugSelection2">     
                     <div style="margin">
                             <div class="bold centered" style="font-size:16px">
-                            Precipitant &nbsp<input id="precipitantName" onclick="loadprecipitant();" maxlength="20" value = "" defaultValue = "any" placeholder = "Any"/></div>
+                            Precipitant &nbsp<input id="precipitantName" onclick="autoCompletePrecipitantName();" maxlength="20" value = "" defaultValue = "any" placeholder = "Any"/></div>
                     </div>
 
                 </div>
@@ -354,8 +79,11 @@ function loadprecipitant(){ // 2nd drug auto complete, Note: may have problems w
             </form>
             <br>
             <br>
-            <div class="test">
-              <div class="bold" style="font-size:16px;margin-left:150px" id="overview">Recent Evidence</div>
+    <div class="test">
+    
+    <!-- HIDE DEFAULT RENCENTLY 5 INSTANCES
+    <div class="bold" style="font-size:16px;margin-left:150px" id="overview">Recent Evidence</div>
+    -->
     <div id="drugSelection1t">
     <div id="timeline2"></div>
   </div>
