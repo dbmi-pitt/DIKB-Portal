@@ -1,6 +1,6 @@
 // 1st drug auto complete drug name
 function autoCompleteObjectName() {
-    var restCallUrl = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/objectdrugname";
+    var restCallUrl = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/drugname";
     $("input#objectName").autocomplete({ 
         width: 300,
         max: 10,
@@ -57,7 +57,7 @@ function autoCompletePrecipitantName(){
     //alert($('select[id="objectName"]').val());
     //alert(inputObject);
     
-    var restCallUrl = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/precipitantdrugname/" + inputObject;
+    var restCallUrl = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/drugname/" + inputObject;
 
     $("input#precipitantName").autocomplete({      
 	width: 300,
@@ -127,7 +127,7 @@ function showbar(){
     if(objectName=="")
 	objectName = document.getElementById("objectName").text;
     if(precipitantName=="") {
-	restCall = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/precipitantdrugname/" + objectName
+	restCall = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/drugname/" + objectName
 	$.ajax({
             url: restCall,
             type: 'GET',
