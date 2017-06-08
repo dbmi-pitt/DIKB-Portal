@@ -1,0 +1,37 @@
+
+<!-- saved from url=(0043)file:///C:/Users/Owner/Documents/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+    
+    <script src="./index_files/jquery.min.js.download"></script>
+    <script type="text/javascript" src="./index_files/d3.min.js.download"></script>
+    <script> 
+    $(document).ready(function(){
+        $("#flip").click(function(){
+            $("#panel").slideToggle("slow");
+        });
+    });
+    </script>
+    
+        <style> 
+        #panel, #flip {
+            width: 500px;
+            border-radius: 15px;
+            padding: 50px;
+            text-align: center;
+            background-color: #7BCCD2;
+            border: solid 1px #1E5B60;
+        }
+
+        #panel {
+            padding: 50px;
+            display: none;
+        }
+        </style>
+    </head>
+    <body>
+        <div id="flip">wee</div>
+        <div id="panel">woo!</div>
+        <div id="p"><br></div>
+        <svg width="50" height="50"><circle cx="25" cy="25" r="25" style="fill: teal;"></circle></svg>
+    
+</body></html>
