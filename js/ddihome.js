@@ -139,9 +139,8 @@ function showbar(){
                 else
                     length = data.length;
                 for (var i = 0;i < length; i++) {
-                    //alert(data[i].DRUG);
                     //items[i+1] = tempitem[0];
-                    drawd3diagram(objectName,data[i].DRUG);
+                    drawd3diagram(objectName,data[i].CONCEPT_NAME);
                 }
                 
 		//}) );
@@ -163,8 +162,6 @@ function showbar(){
               }*/
         });
     }else{
-	//alert(objectName+precipitantName);
-	//alert(objectName);
 	//var data1;
 	drawd3diagram(objectName,precipitantName);
     }
@@ -189,10 +186,8 @@ function drawd3diagram(objectName,precipitantName){
         crossDomain: true,
         success: function(data) {
             // var json = JSON.parse(data);	    
-            // datalength = data.length;
-	    datalength = 1;
-            data1 = data;
-            //alert(data1[1].fullname);
+            datalength = data.length;
+            methodResults = data;
             var margin = {top: 70, right: 40, bottom: 10, left: 65},
 		width = 600 - margin.left - margin.right,
 		height = 105 - margin.top - margin.bottom;  //chart width	    
@@ -219,35 +214,15 @@ function drawd3diagram(objectName,precipitantName){
 		.attr("id", "d3-plot")
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-	    //alert(datalength);
-	    if(datalength == 1)
-	    {
-		color.domain([data1[0].method]);
-	    }
-	    if(datalength == 2)
-	    {
-		color.domain([data1[0].method, data1[1].method]);
-	    }
-	    if(datalength == 3)
-	    {
-		color.domain([data1[0].method, data1[1].method, data1[2].method]);
-	    }
-	    if(datalength == 4)
-	    {
-		color.domain([data1[0].method, data1[1].method, data1[2].method, data1[3].method]);
-	    }
-	    if(datalength == 5)
-	    {
-		color.domain([data1[0].method, data1[1].method, data1[2].method, data1[3].method, data1[4].method]);
-	    }
-	    if(datalength == 6)
-	    {
-		color.domain([data1[0].method, data1[1].method, data1[2].method, data1[3].method, data1[4].method, data1[5].method]);
-	    }
-	    //d3.csv("raw_data.csv", function(error, data) {
-	    
+
+	    var methodL = []
+	    methodResults.forEach(function(methodItem) {
+		methodL.push(methodItem.method);
+	    });
+	    color.domain(methodL);
+
 	    //------------------------loop parse csv-----------------------------
-	    data1.forEach(function(d) {
+	    methodResults.forEach(function(d) {
 		//d.date = parseDate(d.date);
 		//d.close = +d.close;
 		// calc percentages
@@ -265,22 +240,19 @@ function drawd3diagram(objectName,precipitantName){
 		var x0 = 0;
 		var idx = 0;
 		
-		d.boxes = color.domain().map(function(name) { return {fullname: data1[idx].inferredMethod, name: name, x0: x0, x1: x0 += +data1[idx].value, n: +data1[idx++].value}; });
+		d.boxes = color.domain().map(function(name) { return {fullname: methodResults[idx].inferredMethod, name: name, x0: x0, x1: x0 += +methodResults[idx].value, n: +methodResults[idx++].value}; });
 	    });
 
 	    var min_val = d3.min(data, function(d) {
-		return d.boxes["0"].x0;
-		
-            });
-	    
+		return d.boxes["0"].x0;		
+            });	    
 	    var max_val = d3.max(data, function(d) {
 		return d.boxes[datalength-1].x1;
             });
 	    
 	    x.domain([min_val, max_val]).nice();
 	    y.domain(data.map(function(d) { return d.Question; }));
-	    
-	    
+	    	    
 	    svg.append("g")
 		.attr("class", "y axis")
 		.call(yAxis)
@@ -304,8 +276,6 @@ function drawd3diagram(objectName,precipitantName){
 		.attr("width", function(d) { return x(d.x1) - x(d.x0); })
 		.style("fill", function(d) { return color(d.name); });
 	    //.addEventListener("click", test());
-	    
-
 
 	    //----------------------text on bar----------------------------d.x0, d.x1, d.n
 	    bars.append("text")
@@ -349,8 +319,8 @@ function drawd3diagram(objectName,precipitantName){
 		.data(color.domain().slice())
 		.enter().append("g")
 		.attr("class", "legend")
-	    //.attr("transform", function(d, i) { return "translate(" + legend_tabs[i] + ",-45)"; });
 		.attr("transform", function(d, i) { return "translate(0," + legend_tabs[i] + ")"; });
+	    //.attr("transform", function(d, i) { return "translate(" + legend_tabs[i] + ",-45)"; });
 	    
 	    legend.append("rect")
 		.attr("x", 0)
@@ -378,9 +348,6 @@ function drawd3diagram(objectName,precipitantName){
 	    
 	    var movesize = width/2 - startp.node().getBBox().width/2;
 	    d3.selectAll(".legendbox").attr("transform", "translate(" + movesize  + ",-70)");
-	    
-
-	    //});
         },
         error: function(data) {
             alert("Something went wrong while getting Index list. Please try again.");
