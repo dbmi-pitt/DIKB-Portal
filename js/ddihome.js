@@ -25,7 +25,7 @@ function autoCompleteObjectName() {
                     var j = 0;
                     items[0] = "Any";
                     for (var i = 1; i < data.length+1; i++) {
-			items[i] = data[i-1].DRUG;
+			items[i] = data[i-1].CONCEPT_NAME;
                     }
                     var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
 		    
@@ -54,11 +54,7 @@ function autoCompleteObjectName() {
 function autoCompletePrecipitantName(){
 
     var inputObject = $('input#objectName').val();
-    //alert($('select[id="objectName"]').val());
-    //alert(inputObject);
-    
     var restCallUrl = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/drugname/" + inputObject;
-
     $("input#precipitantName").autocomplete({      
 	width: 300,
         max: 10,
@@ -83,7 +79,7 @@ function autoCompletePrecipitantName(){
                     var tempitem = "Any";
                     var j = 0;
                     for (var i = 1; i < data.length+1; i++) {
-			items[i] = data[i-1].DRUG;
+			items[i] = data[i-1].CONCEPT_NAME;
                     }
                     var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
                     if(request.term == " ")
@@ -412,8 +408,7 @@ function showtable(clickname,clicksource,precipitantName,objectName){
     var data1;
     //document.write("    <td valign = 'top'>Evidence Against</td>");
     $.ajax({
-	// url: "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/search/" + objectName + "/" + precipitantName + "/" + clicksource,
-        url: "http://localhost:8090/WebAPI/DIKB/POSTGRES-DIKB/search/" + objectName + "/" + precipitantName + "/" + clicksource,
+	url: "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/search/" + objectName + "/" + precipitantName + "/" + clicksource,
         type: 'GET',
         dataType: 'json',
         contentType: "application/json",
@@ -423,53 +418,7 @@ function showtable(clickname,clicksource,precipitantName,objectName){
             //alert(data[0].Object);
             
             for (var i = 0; i < data.length; i++) {
-                var tempcolumn='';
-                row = $('<tr bgcolor="#FFFFFF"></tr>');
-                /*if(i == 0) {
-                  tempcolumn = "<td>" + clickname + "</td>";
-                  tempcolumn += "<td>" + data[i].Object + "</td>";
-                  }else{
-                  tempcolumn = "<td></td>";
-                  tempcolumn += "<td></td>"
-                  }*/
-		// generate table in html
-                if(i!=0)
-                {
-                    if(data[i].assertType == data[i-1].assertType){
-			tempcolumn += "<td></td>";
-                    }else{
-			tempcolumn += "<td>" + data[i].assertType.replace("_"," ") + "</td>";
-                    }
-                }else{
-                    tempcolumn += "<td>" + data[i].assertType.replace("_"," ") + "</td>";
-                }
-                //alert(tempcolumn);
-                if(i!=0)  
-                {
-                    if((data[i].Precipitant == data[i-1].Precipitant)&&(data[i].assertType == data[i-1].assertType)){
-			tempcolumn += "<td></td>";
-                    }else{
-			tempcolumn += "<td>" + data[i].Precipitant + "</td>";
-                    }
-                }else{
-                    tempcolumn += "<td>" + data[i].Precipitant + "</td>";
-                  }
-		
-                if(data[i].evidenceRole == "support")
-                {
-                    tempcolumn += "<td>Support</td>";
-                    tempcolumn += "<td bgcolor='#ECF5E1'  align='left' style='line-height:15px;padding-left:7px'>" + data[i].evidenceStatement.substring(0,350) + "...<br><a href='details.html?"+data[i].evidence+"'  target='_blank' color='blue'>More Details</a></td>";
-                }else if(data[i].evidenceRole == "refute"){
-                    tempcolumn += "<td>Refute</td>";
-                    tempcolumn += "<td bgcolor='#F5E1E2' align='left' margin-left='10px' style='line-height:15px;padding-left:7px'>" + data[i].evidenceStatement.substring(0,350) + "...<br><a href='details.html?"+data[i].evidence+"' target='_blank' color='blue'>More Details</a></td>";
-                }else{
-                    tempcolumn += "<td></td>";
-                    tempcolumn += "<td></td>";
-                }
-                
-                column = tempcolumn;
-                row.append(column);
-                table.append(row);                
+                table.append("evidence table");                
             }
         },
         error: function(data) {

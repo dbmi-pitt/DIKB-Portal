@@ -1,38 +1,42 @@
 <!DOCTYPE html>
     <head>
-        <title>DIKB Evidence Base</title>
+      <title>DIKB Evidence Base</title>
+      
+      <meta charset="UTF-8">
 
-        <meta charset="UTF-8">
-        <script src="js/jquery-1.11.1.min.js"></script>
-        <link href="css/listbox.css" rel="stylesheet" />
-        <link href="css/BacktoTop.css" rel="stylesheet" />
-        <link href="css/flat-ui.min.css" rel="stylesheet"/>
-	
-	<script src="js/modernizr.js"></script>
-	<script src="js/listbox.js"></script>
-	<script src="js/main.js"></script>
+      <!-- jquery libs -->
+      <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+      <link rel="stylesheet" href="/resources/demos/style.css">
+      <link rel="stylesheet" href="css/jquery-dialog-ui.css">
 
-	<script src="js/jquery-ui.js"></script>
-        <script src="js/d3.min.js"></script>
-        <script src="js/d3-timeline.js"></script>
-        
-        <script src="http://code.jquery.com/jquery-1.7.js" type="text/javascript"></script>
-        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js" type="text/javascript"></script>
-	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
-	
-	<link rel="stylesheet" href="css/jquery-dialog-ui.css">
-	<link rel="stylesheet" type="text/css" href="css/ddistyle.css" />
-	<link href="css/demo.css" rel="stylesheet"/>
-	<link rel="stylesheet" href="css/ddihome.css">
+      <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-	<script src="js/ddihome.js"></script>
+      <link href="css/listbox.css" rel="stylesheet" />
+      <link href="css/BacktoTop.css" rel="stylesheet" />
+      <link href="css/flat-ui.min.css" rel="stylesheet"/>
+      
+      <script src="js/modernizr.js"></script>
+      <script src="js/listbox.js"></script>
+      <script src="js/main.js"></script>
+      
+      <!-- d3 libs -->
+      <script src="js/d3.min.js"></script>
+      <script src="js/d3-timeline.js"></script>
 
-	<script type="text/javascript">
+      
+      <link rel="stylesheet" type="text/css" href="css/ddistyle.css" />
+      <link href="css/demo.css" rel="stylesheet"/>
+      <link rel="stylesheet" href="css/ddihome.css">
+
+      <!-- customized js for ddihome page -->
+      <script src="js/ddihome.js"></script>
+      <script type="text/javascript">
 
 	  $(document).ready(function() { 
 	      autoCompleteObjectName();
 	  });
-
+	  
 	</script>
     </head>
 
@@ -73,9 +77,6 @@
         <br>
 	<div class="test">
 	  
-	  <!-- HIDE DEFAULT RENCENTLY 5 INSTANCES
-	       <div class="bold" style="font-size:16px;margin-left:150px" id="overview">Recent Evidence</div>
-	       -->
     <div id="drugSelection1t">
     <div id="timeline2"></div>
   </div>
@@ -96,48 +97,12 @@
         </div>
 <br>
 <div class="firstpagemargin">
-
-<div id="figure" style="margin-bottom: 5px;"></div>
-
-<div class = "drugselected"></div>
-<div id = "here_table"></div>
-
-      <!--<p>
-      <b style="font-size:22px">Download all 14 merged PDDI datasets</b><br>
-	<a style = "font-size:15px" href="https://dbmi-icode-01.dbmi.pitt.edu/dikb-evidence/pddi-sets/CombinedDatasetConservative.csv.zip">More conservative dataset</a>&nbsp;&nbsp;&nbsp;
-	<a style = "font-size:15px" href="https://dbmi-icode-01.dbmi.pitt.edu/dikb-evidence/pddi-sets/CombinedDatasetNotConservative.csv.zip">Less conservative dataset</a>
-      </p>
-<p class = "lead" style = "font-size:13px">
-More conservative is limited matches between a DrugBank and UNII record to those cases where an exact case-insensitive match was identified for both an InChI identifier and either the drug preferred term or synonym. 
-</p>
-
-<h5><b style="font-size:22px">Funding Acknowledgements</b></h5>
-<p class = "lead" style = "font-size:13px">This project is supported by a grant from the National Library of Medicine: "Addressing gaps in clinically useful evidence on drug-drug interactions"   (1R01LM011838-01)</p>
-
-
-<h5><b style="font-size:22px">Citations for PDDI sources </b></h5>
-
-<b style="font-size:15px">Five of the sources were developed for clinical application</b>
-<ul class = "lead" style = "text-align: left; font-size: 13px;">
-<li>Credimeds: a list of PDDIs thought to be clinically relevant and supported by strong scientific evidence
-
- “Crediblemeds.org,” 05-Oct-2013. [Online]. Available: http://www.crediblemeds.org/.[Accessed: 05-Oct-2013].  
-</li>
-
-
-</ul>
-
-<b style="font-size:15px">Four of the sources were developed to support NLP algorithm development</b>
-<ul class = "lead" style = "text-align: left; font-size: 13px;">
-<li>DDI Corpus 2011 - the reference standard for the 2011 SemEval Challenge on drug-drug interaction NLP
-
-I. Segura-Bedmar, P. Martınez, and D. Sánchez-Cisneros, “The 1st DDIExtraction-2011
-challenge task: Extraction of Drug-Drug Interactions from biomedical texts,” 2011
-</li>
-
-</ul>
-
-<BR>-->
+  
+  <div id="figure" style="margin-bottom: 5px;"></div>
+  
+  <div class="claim-label"></div>
+  <div id="evidence-details-anchor"></div>
+  
   <br>
   <br>
   <br>
