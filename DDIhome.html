@@ -49,13 +49,15 @@
         </header>		
 	
 	<form name="ddisearch" action="javascript:showbar();" method="get">
+	  
 	  <div id="drugSelection1">			
 	    <div style="margin">
 	      <div class="bold centered" style="font-size:16px">
 		Object &nbsp<input id="objectName" maxlength="20" value = "" defaultValue = "any" placeholder = "Any"/></div>
 	      <!-- onclick = "returnall()" -->
             </div>	    
-          </div>            
+          </div>
+	  <div id="drugConceptItem1"></div>
           
           <div id="drugSelection2">     
             <div style="margin">
@@ -63,12 +65,11 @@
                 Precipitant &nbsp<input id="precipitantName" onclick="autoCompletePrecipitantName();" maxlength="20" value = "" defaultValue = "any" placeholder = "Any"/></div>
             </div>	    
           </div>
+	  <div id="drugConceptItem2"></div> 
           
-          <!-- <div id="drugSelection2"> -->
 	  <div id="ddiSearchSubmit">
             <div id="submitButton1">
               <input id="findInteractionsSubmit" class="clear regButton1" type="submit" value="Search"/>
-	      <!-- <button id="findInteractionsSubmit" class="clear regButton1" type="submit" value="Search"/> -->
             </div>
             <div id="warningMessage" class="centered warning"></div>
           </div>

@@ -25,26 +25,32 @@ function autoCompleteObjectName() {
                     var j = 0;
                     items[0] = "Any";
                     for (var i = 1; i < data.length+1; i++) {
-			items[i] = data[i-1].CONCEPT_NAME;
+			items[i] = {value: data[i-1].CONCEPT_NAME, conceptCode: data[i-1].CONCEPT_CODE, vocabularyId: data[i-1].VOCABULARY_ID, conceptClassId: data[i-1].CONCEPT_CLASS_ID};
                     }
-                    var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
-		    
+                    var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );		    
                     if(request.term == " ")
                     {
 			response( $.grep( items, function( item ){
-                            return item;
+                            return item.value;
 			}) );
                     }else {
 			response( $.grep( items, function( item ){
-                            return matcher.test( item );
+                            return matcher.test( item.value );
 			}) );
-                    }            
+                    }
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
                     alert("Something went wrong while getting Index list. Please try again.");
 		}
             });
-        }	
+        },
+	select: function(event, ui) {
+	    // update drug 1 infor (concept name, concept code, vocabulary id)
+	    $("#drugConceptItem1").attr("concept_name", ui.item.value);
+	    $("#drugConceptItem1").attr("concept_code", ui.item.conceptCode);
+	    $("#drugConceptItem1").attr("vocabulary_id", ui.item.vocabularyId);
+	    $("#drugConceptItem1").attr("concept_class_id", ui.item.conceptClassId);
+	}
     });
 }
 
@@ -53,8 +59,12 @@ function autoCompleteObjectName() {
 // Note: may have problems when triggering auto complete
 function autoCompletePrecipitantName(){
 
-    var inputObject = $('input#objectName').val();
-    var restCallUrl = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/drugname/" + inputObject;
+    var drug1 = $("#drugConceptItem1");
+    var conceptName = drug1.attr("concept_name");
+    var vocabularyId = drug1.attr("vocabulary_id");
+    var conceptCode = drug1.attr("concept_code");
+    var restCallUrl = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/drugname2/" + vocabularyId.toLowerCase() + "-" + conceptCode;
+    
     $("input#precipitantName").autocomplete({      
 	width: 300,
         max: 10,
@@ -79,25 +89,31 @@ function autoCompletePrecipitantName(){
                     var tempitem = "Any";
                     var j = 0;
                     for (var i = 1; i < data.length+1; i++) {
-			items[i] = data[i-1].CONCEPT_NAME;
+			items[i] = {value: data[i-1].CONCEPT_NAME, conceptCode: data[i-1].CONCEPT_CODE, vocabularyId: data[i-1].VOCABULARY_ID, conceptClassId: data[i-1].CONCEPT_CLASS_ID};
                     }
                     var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
-                    if(request.term == " ")
-                    {
+
+		    if(request.term == " ") {
 			response( $.grep( items, function( item ){
                             return item;
-			}) );
+			}));
                     }else {
 			response( $.grep( items, function( item ){
                             return matcher.test( item );
-			}) );
+			}));
                     }
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
                     alert("Something went wrong while getting Index list. Please try again.");
 		}
             });
-        }	
+        },
+	select: function(event, ui) {
+	    // update drug 2 infor (concept name, concept code, vocabulary id)
+	    $("#drugConceptItem2").attr("concept_name", ui.item.value);
+	    $("#drugConceptItem2").attr("concept_code", ui.item.conceptCode);
+	    $("#drugConceptItem2").attr("vocabulary_id", ui.item.vocabularyId);
+	}	
     });
 }
 
