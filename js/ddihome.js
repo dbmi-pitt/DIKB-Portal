@@ -118,9 +118,28 @@ function autoCompletePrecipitantName(){
 }
 
 
-
-function strStartsWith(str, prefix) {
-    return str.indexOf(prefix) === 0;
+function drawd3diagramForOneDrug(conceptName, vocabularyId, conceptCode) {
+    restfulCall = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/drugname2/" + vocabularyId.toLowerCase() + "-" + conceptCode;
+    $.ajax({
+        url: restfulCall,
+        type: 'GET',
+        dataType: 'json',
+        contentType: "application/json",
+        crossDomain: true,
+        success: function(data) {
+            var length = 0;
+            if(data.length>5)
+                length = 5;
+            else
+                length = data.length;
+            for (var i = 0;i < length; i++) {
+                drawd3diagram(conceptName, vocabularyId, conceptCode, data[i].CONCEPT_NAME, data[i].VOCABULARY_ID, data[i].CONCEPT_CODE);
+            }		
+        },
+        error: function(data) {
+            alert("[WARN] Something went wrong while getting Index list. Please try again.");
+        }
+    });
 }
 
 
@@ -128,74 +147,46 @@ function strStartsWith(str, prefix) {
 // show all assertions by type in bar
 function showbar(){ 
     $(".drugselected").text("");
-    $("#hoverRes").remove();
-    // document.getElementById("overview").innerHTML = "";
-    //d3.select("#figure").removeChild();
+    $("#hoverRes").remove();    
     d3.select("svg").remove();
     $("#detailstable").remove();
-    var objectName = document.getElementById("objectName").value;
-    var precipitantName = document.getElementById("precipitantName").value;
     
-    if(objectName=="")
-	objectName = document.getElementById("objectName").text;
-    if(precipitantName=="") {
-	restCall = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/drugname/" + objectName
-	$.ajax({
-            url: restCall,
-            type: 'GET',
-            dataType: 'json',
-            contentType: "application/json",
-            crossDomain: true,
-            success: function(data) {
-                //var json = JSON.parse(data);
-                var length = 0;
-                //alert(data.length);
-                if(data.length>5)
-                    length = 5;
-                else
-                    length = data.length;
-                for (var i = 0;i < length; i++) {
-                    //items[i+1] = tempitem[0];
-                    drawd3diagram(objectName,data[i].CONCEPT_NAME);
-                }
-                
-		//}) );
-		
-            },
-            error: function(data) {
-                alert("Something went wrong while getting Index list. Please try again.");
-            }
-            /*url: "/JSON/AjaxRequest",
-              dataType: "json",
-              data: request,
-              success: function( data, textStatus, jqXHR) {
-              console.log( data);
-              var items = data;
-              response(items);
-              },
-              error: function(jqXHR, textStatus, errorThrown){
-              console.log( textStatus);
-              }*/
-        });
-    }else{
-	//var data1;
-	drawd3diagram(objectName,precipitantName);
+    var drug1 = $("#drugConceptItem1");
+    var drug2 = $("#drugConceptItem2");
+    
+    var conceptName1 = drug1.attr("concept_name");
+    var vocabularyId1 = drug1.attr("vocabulary_id");
+    var conceptCode1 = drug1.attr("concept_code");
+
+    var conceptName2 = drug2.attr("concept_name");
+    var vocabularyId2 = drug2.attr("vocabulary_id");
+    var conceptCode2 = drug2.attr("concept_code");
+
+    if (conceptCode1 == null && conceptCode2 == null) {
+	alert("[INFO] please select at least one drug for search!");
+    } else if (conceptCode1 == null || vocabularyId1 == null) {
+	drawd3diagramForOneDrug(conceptName2, vocabularyId2, conceptCode2);
+    } else if (conceptCode2 == null || vocabularyId2 == null) {
+	drawd3diagramForOneDrug(conceptName1, vocabularyId1, conceptCode1);
+    } else{
+	console.log("both drugs have been filled");
+	console.log(conceptCode1);
+	console.log(conceptCode2);
+	drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, vocabularyId2, conceptCode2);
     }
-    //var data1 = [{"name":"Other","value":1},{"name":"EV_PK_DDI_Par_Grps","value":1},{"name":"EV_PK_DDI_RCT","value":1},{"name":"Non_traceable_Drug_Label_Statement","value":2},{"name":"Non_traceable_Drug","value":2}];
 }
 
 
 // Using D3 lib, draw diagram based on precipitant and object name
-function drawd3diagram(objectName,precipitantName){
+function drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, vocabularyId2, conceptCode2){
     $("#hoverRes").remove();
-    // document.getElementById("overview").innerHTML = "";
     d3.select("svg").remove();
     d3.select("svg").remove();
     $("#detailstable").remove();
     var datalength;
     var data1;
     $.ajax({        
-	url: "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/method/"+objectName+"/"+precipitantName,
+	url: "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/method/" + vocabularyId1.toLowerCase() + "-" + conceptCode1 + "/" + vocabularyId2.toLowerCase() + "-" + conceptCode2,
         type: 'GET',
         dataType: 'json',
         contentType: "application/json",
@@ -231,6 +222,7 @@ function drawd3diagram(objectName,precipitantName){
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+	    // add list of method to method list for generating color bar
 	    var methodL = []
 	    methodResults.forEach(function(methodItem) {
 		methodL.push(methodItem.method);
@@ -256,7 +248,12 @@ function drawd3diagram(objectName,precipitantName){
 		var x0 = 0;
 		var idx = 0;
 		
-		d.boxes = color.domain().map(function(name) { return {fullname: methodResults[idx].inferredMethod, name: name, x0: x0, x1: x0 += +methodResults[idx].value, n: +methodResults[idx++].value}; });
+		d.boxes = color.domain()
+		    .map(function(name)
+			 {
+			     console.log(name);
+			     return {fullname: methodResults[idx].inferredMethod, name: name, x0: x0, x1: x0 += +methodResults[idx].value, n: +methodResults[idx++].value};
+			 });
 	    });
 
 	    var min_val = d3.min(data, function(d) {
@@ -318,14 +315,15 @@ function drawd3diagram(objectName,precipitantName){
 		.attr("x1", x(0))
 		.attr("x2", x(0))
 		.attr("y2", height);
-	    
+
+	    // customize the name of color bar as 2nd drug concept name 
 	    svg.append("text")
 		.attr("x", -60)
 		.attr("y", 9)
 		.attr("dy", ".35em")
 		.style("text-anchor", "begin")
 		.style("font" ,"10px sans-serif")
-		.text(function(d) { return precipitantName; });
+		.text(function(d) { return conceptName2; });
 	    
 	    //-------------------------legend-----------------------------
 	    var startp = svg.append("g").attr("class", "legendbox").attr("id", "mylegendbox");
@@ -337,7 +335,6 @@ function drawd3diagram(objectName,precipitantName){
 		.attr("class", "legend")
 		.attr("transform", function(d, i) { return "translate(0," + legend_tabs[i] + ")"; });
 	    //.attr("transform", function(d, i) { return "translate(" + legend_tabs[i] + ",-45)"; });
-	    
 	    legend.append("rect")
 		.attr("x", 0)
 		.attr("width", 18)
@@ -408,4 +405,10 @@ function showtable(clickname,clicksource,precipitantName,objectName){
             alert("Something went wrong while getting Index list. Please try again.");
         }        
     });    
+}
+
+
+
+function strStartsWith(str, prefix) {
+    return str.indexOf(prefix) === 0;
 }
