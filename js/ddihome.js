@@ -1,5 +1,5 @@
 // 1st drug auto complete drug name
-function autoCompleteObjectName() {
+function autoCompleteDrugname1() {
     var restCallUrl = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/drugname";
     $("input#objectName").autocomplete({ 
         width: 300,
@@ -57,7 +57,7 @@ function autoCompleteObjectName() {
 
 // 2nd drug auto complete drug name
 // Note: may have problems when triggering auto complete
-function autoCompletePrecipitantName(){
+function autoCompleteDrugname2(){
 
     var drug1 = $("#drugConceptItem1");
     var conceptName = drug1.attr("concept_name");
