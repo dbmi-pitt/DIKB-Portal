@@ -21,19 +21,18 @@ function autoCompleteDrugname1() {
 		crossDomain: true,
 		success: function(data, textStatus, jqXHR) {
                     var items = [];
-                    var tempitem = "Any";
-                    var j = 0;
-                    items[0] = "Any";
+		    items[0] = {value: "Any", conceptCode: null, vocabularyId: null, conceptClassId: null};
+		    
                     for (var i = 1; i < data.length+1; i++) {
 			items[i] = {value: data[i-1].CONCEPT_NAME, conceptCode: data[i-1].CONCEPT_CODE, vocabularyId: data[i-1].VOCABULARY_ID, conceptClassId: data[i-1].CONCEPT_CLASS_ID};
                     }
-                    var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );		    
-                    if(request.term == " ")
-                    {
+                    var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+		    
+                    if(request.term == " ") {
 			response( $.grep( items, function( item ){
                             return item.value;
 			}) );
-                    }else {
+                    } else {
 			response( $.grep( items, function( item ){
                             return matcher.test( item.value );
 			}) );
@@ -86,8 +85,8 @@ function autoCompleteDrugname2(){
 		success: function(data, textStatus, jqXHR) {
                     //var json = JSON.parse(data);
                     var items = [];
-                    var tempitem = "Any";
-                    var j = 0;
+		    items[0] = {value: "Any", conceptCode: null, vocabularyId: null, conceptClassId: null};
+		    
                     for (var i = 1; i < data.length+1; i++) {
 			items[i] = {value: data[i-1].CONCEPT_NAME, conceptCode: data[i-1].CONCEPT_CODE, vocabularyId: data[i-1].VOCABULARY_ID, conceptClassId: data[i-1].CONCEPT_CLASS_ID};
                     }
@@ -95,11 +94,11 @@ function autoCompleteDrugname2(){
 
 		    if(request.term == " ") {
 			response( $.grep( items, function( item ){
-                            return item;
+                            return item.value;
 			}));
                     }else {
 			response( $.grep( items, function( item ){
-                            return matcher.test( item );
+                            return matcher.test( item.value );
 			}));
                     }
 		},
@@ -170,8 +169,6 @@ function showbar(){
 	drawd3diagramForOneDrug(conceptName1, vocabularyId1, conceptCode1);
     } else{
 	console.log("both drugs have been filled");
-	console.log(conceptCode1);
-	console.log(conceptCode2);
 	drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, vocabularyId2, conceptCode2);
     }
 }
