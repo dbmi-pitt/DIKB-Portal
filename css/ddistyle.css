@@ -388,16 +388,11 @@ table {
 	background:#eaebec;
 	
 	border:#ccc 1px solid;
-/*
-	-moz-border-radius:3px;
-	-webkit-border-radius:3px;
-	border-radius:3px;
-*/
+	position: relative;
+	
 	-moz-box-shadow: 0 1px 2px #d1d1d1;
 	-webkit-box-shadow: 0 1px 2px #d1d1d1;
-	box-shadow: 0 1px 2px #d1d1d1;
-	
-	
+	box-shadow: 0 1px 2px #d1d1d1;		
 }
 table th {
 	padding:5px 5px 5px 5px;

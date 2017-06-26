@@ -33,10 +33,12 @@
       <script src="js/ddihome.js"></script>
       <script type="text/javascript">
 
+	  // $('#objectName').val('');
+	
 	  $(document).ready(function() { 
 	      autoCompleteDrugname1();
 	  });
-	  
+
 	</script>
     </head>
 
@@ -53,7 +55,7 @@
 	  <div id="drugSelection1">			
 	    <div style="margin">
 	      <div class="bold centered" style="font-size:16px">
-		Object &nbsp<input id="objectName" maxlength="20" value = "" defaultValue = "any" placeholder = "Any"/></div>
+		Object/Drug1 &nbsp<input id="objectName" maxlength="20" value = "" defaultValue = "any" placeholder = "Any"/></div>
 	      <!-- onclick = "returnall()" -->
             </div>	    
           </div>
@@ -62,7 +64,7 @@
           <div id="drugSelection2">     
             <div style="margin">
               <div class="bold centered" style="font-size:16px">
-                Precipitant &nbsp<input id="precipitantName" onclick="autoCompleteDrugname2();" maxlength="20" value = "" defaultValue = "any" placeholder = "Any"/></div>
+                Precipitant/Drug2 &nbsp<input id="precipitantName" onclick="autoCompleteDrugname2();" maxlength="20" value = "" defaultValue = "any" placeholder = "Any"/></div>
             </div>	    
           </div>
 	  <div id="drugConceptItem2"></div> 
@@ -76,97 +78,20 @@
         </form>
         <br>
         <br>
-	<div class="test">
-	  
-    <div id="drugSelection1t">
-    <div id="timeline2"></div>
-  </div>
-    <div id="hoverRes" >
-      <div id="drugSelection2">
+        <br>
+        <br>	
+      </div>
 
-      <div class="coloredDiv"></div>
-      <blockquote>
-      <div id="name" align="left"></div>
-      <div id="objectname" align="left" onclick = "showbar()"></div>
-      <div id="sourcetype" align="left"></div>
-      <div id="statement" align="left"></div>
-      <div id="scrolled_date"></div>
-        </blockquote>
-  </div>
-    </div>
-            </div>
-        </div>
-<br>
-<div class="firstpagemargin">
-  
-  <div id="figure" style="margin-bottom: 5px;"></div>
-  
-  <div class="claim-label"></div>
-  <div id="evidence-details-anchor"></div>
-  
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-<h5>License</h5>
-<div class = "lead" style = "font-size:13px">
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc-sa/3.0/88x31.png" /></a><br/>
-<span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Dataset" property="dct:title" rel="dct:type">Drug Interaction Knowledge Base (DIKB)</span> 
-by <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.dbmi.pitt.edu/person/richard-boyce-phd" property="cc:attributionName" rel="cc:attributionURL">Richard D. Boyce</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License</a>.
-</div>
+      <div class="firstpagemargin">
 
-<font size="-5"  color="#999999">
+	<!-- d3 bar chart for showing claims by method -->
+	<div id="figure" style="margin-bottom: 5px;"></div>	
+	<br>
 
-<h5 style = "font-size: 13px;"><bold>MEDICAL DISCLAIMER</bold></h5>
+	<!-- evidence table will present when pick specific method -->
+	<div id="evidence-table-anchor"></div>
 
-<p class = "footerp">
-<b>No advice</b>
-This website contains general information about medical conditions and treatments.  The information is not advice, and should not be treated as such.
-
-<b>Limitation of warranties</b>
-
-The medical information on this website is provided "as is" without any representations or warranties, express or implied. Neither the author (Richard Boyce) or the University of Pittsburgh make any representations or warranties in relation to the medical information on this website.
-
-Without prejudice to the generality of the foregoing paragraph, Neither the author (Richard Boyce) or the University of Pittsburgh warrant that:</p>
-
-<ul>
-  <li style = "margin-top: -18px;font-weight: 400">the medical information on this website will be constantly available, or available at all;</li>
-
-  <li style = "margin-top: -4px;font-weight: 400">the medical information on this website is complete, true, accurate, up-to-date, or non-misleading.</li>
-</ul>
-<p class = "footerp" style = "margin-top: -18px">
-<b>Professional assistance</b>
-
-You must not rely on the information on this website as an alternative to medical advice from your doctor or other professional healthcare provider.
-
-If you have any specific questions about any medical matter you should consult your doctor or other professional healthcare provider.
-If you think you may be suffering from any medical condition you should seek immediate medical attention.
-You should never delay seeking medical advice, disregard medical advice, or discontinue medical treatment because of information on this website.
-
-<br>
-<b>Liability</b>
-<BR>
-Nothing in this medical disclaimer will limit any of our liabilities in any way that is not permitted under applicable law, or exclude any of our liabilities that may not be excluded under applicable law.
-<BR>
-<b>About this medical disclaimer</b>
-<BR>
-We created this <a href="http://www.freenetlaw.com/free-medical-disclaimer/">medical disclaimer</a> with the help of a Contractology precedent available at www.freenetlaw.com.
-    Premium templates available from Contractology include <a href="http://www.contractology.com/precedents/non-disclosure-agreement.html">confidential disclosure agreement forms</a>.
-
-
-</p>
-</font>
-<a href="#0" class="cd-top">Top</a>
-<HR>
-<div text-align = "center">
-<IMG style = "float: left; margin-right: 65px;" src="images/logo.png" alt="logo.png" align="top" width = "140px" height = "140px">
-<FONT SIZE="-1"><br>Copyright &#169 2015 - 2016 Richard D. Boyce<BR>All Rights Reserved<BR>
-</FONT>
-<br>
-<br>
-</div>
-</div>
-<hr>
-</body>
+	<object width="100%" height="500px" type="text/html" data="footer.html"></object>
+	
+    </body>
 </html>

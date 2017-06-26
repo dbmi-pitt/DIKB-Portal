@@ -148,7 +148,7 @@ function showbar(){
     $(".drugselected").text("");
     $("#hoverRes").remove();    
     d3.select("svg").remove();
-    $("#detailstable").remove();
+    $("#evidencetable").remove();
     
     var drug1 = $("#drugConceptItem1");
     var drug2 = $("#drugConceptItem2");
@@ -179,9 +179,8 @@ function drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, 
     $("#hoverRes").remove();
     d3.select("svg").remove();
     d3.select("svg").remove();
-    $("#detailstable").remove();
+    $("#evidencetable").remove();
     var datalength;
-    var data1;
     $.ajax({        
 	url: "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/method/" + vocabularyId1.toLowerCase() + "-" + conceptCode1 + "/" + vocabularyId2.toLowerCase() + "-" + conceptCode2,
         type: 'GET',
@@ -248,7 +247,6 @@ function drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, 
 		d.boxes = color.domain()
 		    .map(function(name)
 			 {
-			     console.log(name);
 			     return {fullname: methodResults[idx].inferredMethod, name: name, x0: x0, x1: x0 += +methodResults[idx].value, n: +methodResults[idx++].value};
 			 });
 	    });
@@ -275,10 +273,13 @@ function drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, 
 	    
 	    var bars = vakken.selectAll("rect")
 		.data(function(d) { return d.boxes; })
-		.enter().append("g").attr("class", "subbar")
-		.on('mousedown', function(d) {showtable(d.name,d.fullname,precipitantName,objectName); this.style("font-size","30px")});
+		.enter().append("g").attr("class", "subbar")	    	    
+		.on('mousedown', function(d) {
+		    console.log(d);
+		    showtable(d.name, d.fullname, conceptName1, conceptName2);
+		    // this.style("font-size","30px");
+		}); // show evidence table when click on method
 	    
-
 	    //------------------------bar-----------------------------------d.x0, d.x1, d.name
 	    bars.append("rect")
 		.attr("height", y.rangeBand())
@@ -367,36 +368,21 @@ function drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, 
 
 
 // based on two drugs, list details of assertion with grouped evidence
-function showtable(clickname,clicksource,precipitantName,objectName){
-    console.log("ddihome.js: showtable called");
-    
-    var clicktext = clicksource;
-    $("#detailstable").remove();
-    $(".drugselected").text("Details: " + clickname+"-"+objectName+"-"+precipitantName);
-    var objectName = document.getElementById("objectName").value;
-    var table = $('<table id="detailstable" width="1000px" align="center"></table>');
-    var row = $('<tr></tr>');
-    var column  = $('<td>Predicate</td><td>Precipitant</td><td>Evidence Standpoint</td><td width="1200px">Evidence Content</td>');
-    $('#here_table').append(table);
-    row.append(column);
-    table.append(row);
+function showtable(method, inferredMethod, conceptName1, conceptName2){
+    var method = method.replace(/ /g, '-');
+    $("#evidencetable").remove();
+    $(".drugselected").text("Details: " + method + "-" + conceptName1 + "-" + conceptName2);
 
-    var datalength;
-    var data1;
-    //document.write("    <td valign = 'top'>Evidence Against</td>");
     $.ajax({
-	url: "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/search/" + objectName + "/" + precipitantName + "/" + clicksource,
+	url: "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/search/" + conceptName1 + "/" + conceptName2 + "/" + method,
         type: 'GET',
         dataType: 'json',
         contentType: "application/json",
         crossDomain: true,
         success: function(data) {
-            //alert(clicksource + data.length);
-            //alert(data[0].Object);
-            
-            for (var i = 0; i < data.length; i++) {
-                table.append("evidence table");                
-            }
+            console.log(data);
+	    var columns = ['mp_claim_id','label','claim_text','method','subject'];
+	    tabulate(data, columns);	    
         },
         error: function(data) {
             alert("Something went wrong while getting Index list. Please try again.");
@@ -405,6 +391,37 @@ function showtable(clickname,clicksource,precipitantName,objectName){
 }
 
 
+function tabulate(data, columns) {
+    
+    var table = d3.select('#evidence-table-anchor').append('table');
+    var thead = table.append('thead')
+    var	tbody = table.append('tbody');
+    
+    // append the header row
+    thead.append('tr')
+	.selectAll('th')
+	.data(columns).enter()
+	.append('th')
+	.text(function (column) { return column; });
+    
+    // create a row for each object in the data
+    var rows = tbody.selectAll('tr')
+	.data(data)
+	.enter()
+	.append('tr');
+    
+    // create a cell in each row for each column
+    var cells = rows.selectAll('td')
+	.data(function (row) {	    
+	    return columns.map(function (column) {
+		return {column: column, value: row[column]};
+	    });
+	})
+	.enter()
+	.append('td')
+	.text(function (d) { return d.value; });
+   
+}
 
 function strStartsWith(str, prefix) {
     return str.indexOf(prefix) === 0;
