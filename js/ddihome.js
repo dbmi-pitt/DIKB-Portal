@@ -380,9 +380,16 @@ function showtable(method, inferredMethod, conceptName1, conceptName2){
         contentType: "application/json",
         crossDomain: true,
         success: function(data) {
-            console.log(data);
-	    var columns = ['mp_claim_id','label','claim_text','method','subject'];
-	    tabulate(data, columns);	    
+	    var evidences = []; // parse query results, add (data and material) to evidences list  
+	    for (i = 0; i < data.length; i++) {
+		var dataItem = data[i].evidence;
+		for (j = 0; j < Object.keys(dataItem).length; j++) {
+		    evidences.push(dataItem[j]);
+		}
+	    }
+	    
+	    var columns = ['participants', 'dose1Name','dose1','dose2Name','dose2','auc','aucDirection','aucType','cmax','cmaxDirection','cmaxType','clearance','clearanceDirection','clearanceType','halflife','halflifeDirection','halflifeType'];
+	    tabulate(evidences, columns);	    
         },
         error: function(data) {
             alert("Something went wrong while getting Index list. Please try again.");
@@ -390,7 +397,7 @@ function showtable(method, inferredMethod, conceptName1, conceptName2){
     });    
 }
 
-
+// present evidence data from query results in JSON to tabular format
 function tabulate(data, columns) {
     
     var table = d3.select('#evidence-table-anchor').append('table');
