@@ -48,7 +48,7 @@ function autoCompleteDrugname1() {
 	    $("#drugConceptItem1").attr("concept_name", ui.item.value);
 	    $("#drugConceptItem1").attr("concept_code", ui.item.conceptCode);
 	    $("#drugConceptItem1").attr("vocabulary_id", ui.item.vocabularyId);
-	    $("#drugConceptItem1").attr("concept_class_id", ui.item.conceptClassId);
+	    $("#drugConceptItem1").attr("concept_class_id", ui.item.conceptClassId);	    
 	}
     });
 }

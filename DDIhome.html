@@ -23,7 +23,6 @@
       <!-- d3 libs -->
       <script src="js/d3.min.js"></script>
       <script src="js/d3-timeline.js"></script>
-
       
       <link rel="stylesheet" type="text/css" href="css/ddistyle.css" />
       <link href="css/demo.css" rel="stylesheet"/>
@@ -32,8 +31,6 @@
       <!-- customized js for ddihome page -->
       <script src="js/ddihome.js"></script>
       <script type="text/javascript">
-
-	  // $('#objectName').val('');
 	
 	  $(document).ready(function() { 
 	      autoCompleteDrugname1();
@@ -50,13 +47,18 @@
           <h3 class="centered" style = "font-size:37px">DIKB Evidence Base</h3>
         </header>		
 	
-	<form name="ddisearch" action="javascript:showbar();" method="get">
+	<form name="ddisearch" action="javascript:showbar();" method="get" >
 	  
 	  <div id="drugSelection1">			
 	    <div style="margin">
 	      <div class="bold centered" style="font-size:16px">
-		Object/Drug1 &nbsp<input id="objectName" maxlength="20" value = "" defaultValue = "any" placeholder = "Any"/></div>
-	      <!-- onclick = "returnall()" -->
+		Drug1 &nbsp<input id="objectName" maxlength="20" value = "" defaultValue = "any" placeholder = "Any" autocomplete='off' /></div>
+	      
+	      <!-- drug role precipitant or object -->
+	      <input type="radio" name="drugrole" value="precipitant"> precipitant<br>
+	      <input type="radio" name="drugrole" value="object"> object<br>
+	      <input type="radio" name="drugrole" value="other"> UNK
+	      
             </div>	    
           </div>
 	  <div id="drugConceptItem1"></div>
@@ -64,7 +66,7 @@
           <div id="drugSelection2">     
             <div style="margin">
               <div class="bold centered" style="font-size:16px">
-                Precipitant/Drug2 &nbsp<input id="precipitantName" onclick="autoCompleteDrugname2();" maxlength="20" value = "" defaultValue = "any" placeholder = "Any"/></div>
+                Drug2 &nbsp<input id="precipitantName" onclick="autoCompleteDrugname2();" maxlength="20" value = "" defaultValue = "any" placeholder = "Any" autocomplete='off' /></div>
             </div>	    
           </div>
 	  <div id="drugConceptItem2"></div> 
@@ -93,6 +95,10 @@
 	
         <br><br><br><br>
 	<object width="100%" height="500px" type="text/html" data="footer.html"></object>
+
+	<script type="text/javascript">
+
+	</script>
 	
     </body>
 </html>
