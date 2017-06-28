@@ -52,12 +52,12 @@
 	  <div id="drugSelection1">			
 	    <div style="margin">
 	      <div class="bold centered" style="font-size:16px">
-		Drug1 &nbsp<input id="objectName" maxlength="20" value = "" defaultValue = "any" placeholder = "Any" autocomplete='off' /></div>
+		Drug1 &nbsp<input id="drug1Name" maxlength="20" value = "" defaultValue = "any" placeholder = "Any" autocomplete='off' /></div>
 	      
 	      <!-- drug role precipitant or object -->
 	      <input type="radio" name="drugrole" value="precipitant"> precipitant<br>
 	      <input type="radio" name="drugrole" value="object"> object<br>
-	      <input type="radio" name="drugrole" value="other"> UNK
+	      <input type="radio" name="drugrole" value="any"> any
 	      
             </div>	    
           </div>
@@ -66,7 +66,7 @@
           <div id="drugSelection2">     
             <div style="margin">
               <div class="bold centered" style="font-size:16px">
-                Drug2 &nbsp<input id="precipitantName" onclick="autoCompleteDrugname2();" maxlength="20" value = "" defaultValue = "any" placeholder = "Any" autocomplete='off' /></div>
+                Drug2 &nbsp<input id="drug2Name" onclick="autoCompleteDrugname2();" maxlength="20" value = "" defaultValue = "any" placeholder = "Any" autocomplete='off' /></div>
             </div>	    
           </div>
 	  <div id="drugConceptItem2"></div> 

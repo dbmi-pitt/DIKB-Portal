@@ -1,7 +1,12 @@
 // 1st drug auto complete drug name
 function autoCompleteDrugname1() {
-    var restCallUrl = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/drugname";
-    $("input#objectName").autocomplete({ 
+    var drugRole = $('input[name=drugrole]:checked').val();
+    if (drugRole == "") {
+	drugRole = "any";
+    }
+    
+    var restCallUrl = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/drugname/" + drugRole;
+    $("input#drug1Name").autocomplete({ 
         width: 300,
         max: 10,
         delay: 100,
@@ -57,14 +62,20 @@ function autoCompleteDrugname1() {
 // 2nd drug auto complete drug name
 // Note: may have problems when triggering auto complete
 function autoCompleteDrugname2(){
-
+    
     var drug1 = $("#drugConceptItem1");
     var conceptName = drug1.attr("concept_name");
     var vocabularyId = drug1.attr("vocabulary_id");
     var conceptCode = drug1.attr("concept_code");
-    var restCallUrl = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/drugname2/" + vocabularyId.toLowerCase() + "-" + conceptCode;
     
-    $("input#precipitantName").autocomplete({      
+    var drug1Role = $('input[name=drugrole]:checked').val();
+    if (drug1Role == "") {
+	drug1Role = "any";
+    }
+    
+    var restCallUrl = "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/drugname2/" + vocabularyId.toLowerCase() + "-" + conceptCode + "/" + drug1Role;
+    
+    $("input#drug2Name").autocomplete({      
 	width: 300,
         max: 10,
         delay: 100,
@@ -181,8 +192,13 @@ function drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, 
     d3.select("svg").remove();
     $("#evidencetable").remove();
     var datalength;
+    var drug1Role = $('input[name=drugrole]:checked').val();
+    if (drug1Role == "") {
+	drug1Role = "any";
+    }
+    
     $.ajax({        
-	url: "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/method/" + vocabularyId1.toLowerCase() + "-" + conceptCode1 + "/" + vocabularyId2.toLowerCase() + "-" + conceptCode2,
+	url: "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/method/" + vocabularyId1.toLowerCase() + "-" + conceptCode1 + "/" + vocabularyId2.toLowerCase() + "-" + conceptCode2 + "/" + drug1Role,
         type: 'GET',
         dataType: 'json',
         contentType: "application/json",
@@ -276,7 +292,7 @@ function drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, 
 		.enter().append("g").attr("class", "subbar")	    	    
 		.on('mousedown', function(d) {
 		    console.log(d);
-		    showtable(d.name, d.fullname, conceptName1, conceptName2);
+		    showtable(d.name, d.fullname, conceptName1, conceptName2, drug1Role);
 		    // this.style("font-size","30px");
 		}); // show evidence table when click on method
 	    
@@ -368,13 +384,13 @@ function drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, 
 
 
 // based on two drugs, list details of assertion with grouped evidence
-function showtable(method, inferredMethod, conceptName1, conceptName2){
+function showtable(method, inferredMethod, conceptName1, conceptName2, drug1Role){
     var method = method.replace(/ /g, '-');
     $("#evidencetable").remove();
     $(".drugselected").text("Details: " + method + "-" + conceptName1 + "-" + conceptName2);
 
     $.ajax({
-	url: "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/search/" + conceptName1 + "/" + conceptName2 + "/" + method,
+	url: "http://localhost:8090/WebAPI/mpevidence/POSTGRES-DIKB/search/" + conceptName1 + "/" + conceptName2 + "/" + method + "/" + drug1Role,
         type: 'GET',
         dataType: 'json',
         contentType: "application/json",
