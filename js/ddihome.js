@@ -405,7 +405,14 @@ function showtable(method, inferredMethod, conceptName1, conceptName2, drug1Role
 
 	    for (var i = 0; i < claims.length; i++) {		
 		if (claims[i].method == "DDI clinical trial") {
-		    var columns = ['participants', 'dose1Name','dose1','dose2Name','dose2','auc','aucDirection','aucType','cmax','cmaxDirection','cmaxType','clearance','clearanceDirection','clearanceType','halflife','halflifeDirection','halflifeType'];
+		    var columns = ['evRelationship', 'participants', 'dose1Name','dose1','dose2Name','dose2','auc','aucDirection','aucType','cmax','cmaxDirection','cmaxType','clearance','clearanceDirection','clearanceType','halflife','halflifeDirection','halflifeType'];
+		    tabulate(claims[i], columns);
+		    
+		} else if (claims[i].method == "Case Report") {
+		    var columns = ['evRelationship', 'dose1Name', 'dose1', 'dose1Formulation', 'dose1Duration', 'dose1Regimens', 'dose2Name', 'dose2', 'dose2Formulation', 'dose2Duration', 'dose2Regimens', 'reviewer', 'reviewerdate','reviewertotal','reviewerlackinfo','dipsquestion'];
+		    tabulate(claims[i], columns);
+		    
+		} else if (claims[i].method == "Statement") {
 		    tabulate(claims[i], columns);
 		}
 	    }
@@ -423,50 +430,65 @@ function showtable(method, inferredMethod, conceptName1, conceptName2, drug1Role
 function tabulate(claim, columns) {
 
     var tbAnchor = d3.select('#evidence-table-anchor');
-    var dataItems = claim.evidence;
+
     
     var table = tbAnchor.append('table');
     var thead = table.append('thead')
     var tbody = table.append('tbody');
 
-    var claimList = ["Quote: " + claim.claim_text];
+    var claimQuote = ["Quote: " + claim.claim_text];
+    var claimList = ["method", "subject", "relationship", "object"]
     
-    // claim information
+    // 1st row: claim quote 
     thead.append('tr')
         .selectAll('td')
-	.data(claimList).enter()
+	.data(claimQuote).enter()
         .append('td')
-	.attr("colspan", columns.length)
-    	.text(function (d) { return d; });    
-    
-    // append the header row
-    thead.append('tr')
-    	.selectAll('th')
-    	.data(columns).enter()
-    	.append('th')
-    	.text(function (column) { return column; });
+	.attr("colspan", 20)
+    	.text(function (d) { return d; });
 
-    // evidences (data & material)
-    if (dataItems != null) {
-	// obj list to array
-	var evidenceList = Object.keys(dataItems).map(function (key) { return dataItems[key]; });
-	
-	// create a row for each evidencse
-	var rows = tbody.selectAll('tr')
-    	    .data(evidenceList)
-    	    .enter()
-    	    .append('tr');
+    // 2nd row: claim information
+    var claimRow = thead.append('tr')
+        .selectAll('td')
+    	.data(claimList)
+    	.enter()
+    	.append('td')
+        .text(function (d) { return claim[d]; });   
     
-	// create a cell in each row for each column
-	var cells = rows.selectAll('td')
-    	    .data(function (row) {	    
-    		return columns.map(function (column) {
-    		    return {column: column, value: row[column]};
-    		});
-    	    })
-    	    .enter()
-    	    .append('td')
-    	    .text(function (d) { return d.value; });
+    
+    // when data & material is available
+    if (columns != null) {
+	
+	// header for data & material
+	thead.append('tr')
+    	    .selectAll('th')
+    	    .data(columns).enter()
+    	    .append('th')
+    	    .text(function (column) { return column; });
+	
+	// evidences (data & material)
+	var dataItems = claim.evidence;
+	if (dataItems != null) {
+	    // obj list to array
+	    var evidenceList = Object.keys(dataItems).map(function (key) { return dataItems[key]; });
+	    
+	    // create a row for each evidencse
+	    var rows = tbody.selectAll('tr')
+    		.data(evidenceList)
+    		.enter()
+    		.append('tr');
+	    
+	    // create a cell in each row for each column
+	    var cells = rows.selectAll('td')
+    		.data(function (row) {	    
+    		    return columns.map(function (column) {
+    			return {column: column, value: row[column]};
+    		    });
+    		})
+    		.enter()
+    		.append('td')
+    		.text(function (d) { return d.value; });
+	}
     }
 }
 
