@@ -1,3 +1,12 @@
+// global variables
+var methodColorMap = {};
+methodColorMap["Statement"] = "#f6a580";
+methodColorMap["DDI clinical trial"] = "#c7001e";
+methodColorMap["Case Report"] = "#92c6db";
+methodColorMap["Phenotype clinical study"] = "#92c6db";
+methodColorMap["Experiment"] = "#086fad";
+// "#c7001e", "#f6a580", "#cccccc", "#92c6db", "#086fad", "#c7001e", "#f6a580"
+
 // 1st drug auto complete drug name
 function autoCompleteDrugname1() {
     var drugRole = $('input[name=drugrole]:checked').val();
@@ -213,6 +222,19 @@ function drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, 
             // var json = JSON.parse(data);	    
             datalength = data.length;
             methodResults = data;
+
+	    // add list of method to method list for generating color bar
+	    var methodL = []
+	    methodResults.forEach(function(methodItem) {
+		methodL.push(methodItem.method);
+	    });
+
+
+	    colorRangeL = [];
+	    for (var i = 0; i < methodL.length; i++) {
+		colorRangeL.push(methodColorMap[methodL[i]]);
+	    }
+	    
             var margin = {top: 70, right: 40, bottom: 10, left: 65},
 		width = 600 - margin.left - margin.right,
 		height = 105 - margin.top - margin.bottom;  //chart width	    
@@ -222,9 +244,9 @@ function drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, 
 	    var x = d3.scale.linear()
 		.rangeRound([0, width]);
 	    
-	    var color = d3.scale.ordinal()
-		.range(["#c7001e", "#f6a580", "#cccccc", "#92c6db", "#086fad", "#c7001e", "#f6a580"]); //color chunk
-
+	    var color = d3.scale.ordinal() // color range and domain
+		.range(colorRangeL).domain(methodL);
+	    
 	    var xAxis = d3.svg.axis() //y axis
 		.scale(x)
 		.orient("top");
@@ -239,13 +261,6 @@ function drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, 
 		.attr("id", "d3-plot")
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-	    // add list of method to method list for generating color bar
-	    var methodL = []
-	    methodResults.forEach(function(methodItem) {
-		methodL.push(methodItem.method);
-	    });
-	    color.domain(methodL);
 
 	    //------------------------loop parse csv-----------------------------
 	    methodResults.forEach(function(d) {
@@ -308,7 +323,6 @@ function drawd3diagram(conceptName1, vocabularyId1, conceptCode1, conceptName2, 
 		.attr("x", function(d) { return x(d.x0); })
 		.attr("width", function(d) { return x(d.x1) - x(d.x0); })
 		.style("fill", function(d) { return color(d.name); });
-	    //.addEventListener("click", test());
 
 	    //----------------------text on bar----------------------------d.x0, d.x1, d.n
 	    bars.append("text")
@@ -430,8 +444,6 @@ function showtable(method, inferredMethod, conceptName1, conceptName2, drug1Role
 function tabulate(claim, columns) {
 
     var tbAnchor = d3.select('#evidence-table-anchor');
-
-    
     var table = tbAnchor.append('table');
     var thead = table.append('thead')
     var tbody = table.append('tbody');
@@ -480,7 +492,7 @@ function tabulate(claim, columns) {
 	    
 	    // create a cell in each row for each column
 	    var cells = rows.selectAll('td')
-    		.data(function (row) {	    
+    		.data(function (row) {
     		    return columns.map(function (column) {
     			return {column: column, value: row[column]};
     		    });
