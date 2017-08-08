@@ -1,0 +1,98 @@
+{
+ "name": "lare",
+ "children": [
+  {
+   "name": "clinical consequence pharmacokinetic", 
+   "children": [
+    {"name": "Clinical_Trial_1", "size": 20000},
+    {"name": "Case_Report_1", "size": 20000, 
+      "children": [
+        {"name": "Reference_1", "size": 7500}
+      ]
+    }
+   ]
+  },
+  {
+   "name": "clinical consequence others",
+    "children": [
+    {"name": "Clinical_Trial_1", "size": 20000},
+    {"name": "Statement_1", "size": 2000},
+    {"name": "Case_Report_1", "size": 200}
+   ]
+  },
+  {
+   "name": "quality of evidence",
+    "children": [
+    {"name": "Clinical_Trial_1", "size": 200},
+    {"name": "Statement_1", "size": 20000,
+      "children": [
+        {"name": "Experiment_1", "size": 300},
+        {"name": "Experiment_2", "size": 4000, 
+          "children": [
+            {"name": "Statement_1", "size": 6650}
+          ]
+        }
+      ]
+    }
+   ]
+  },
+  {
+   "name": "evidence items",
+    "children": [
+    {"name": "Clinical_Trial_1", "size": 20000},
+    {"name": "Case_Report_1", "size": 20000}
+   ]
+  },
+  {
+   "name": "mechanism",
+    "children": [
+    {"name": "Statement_1", "size": 20000}
+   ]
+  },
+  {
+   "name": "management options",
+    "children": [
+    {"name": "Statement_1", "size": 20000},
+    {"name": "Experiment_1", "size": 20000}
+   ]
+  },
+  {
+   "name": "seriousness",
+    "children": [
+    {"name": "Experiment_1", "size": 20000},
+    {"name": "Experiment_2", "size": 20000}
+   ]
+  },
+  {
+   "name": "frequency of harm",
+    "children": [
+    {"name": "Clinical_Trial_1", "size": 20000},
+    {"name": "Experiment_1", "size": 20000,
+      "children": [
+        {"name": "Experiment_1", "size": 300},
+        {"name": "Statement_1", "size": 3500},
+        {"name": "Experiment_2", "size": 4000, 
+          "children": [
+            {"name": "Statement_1", "size": 6650}
+          ]
+        }
+      ]
+    }
+   ]
+  },
+  {
+   "name": "frequency of exposure",
+    "children": [
+    {"name": "Case_Report_1", "size": 20000},
+    {"name": "Statement_1", "size": 20000}
+   ]
+  },
+  {
+   "name": "notes",
+    "children": [
+    {"name": "Experiment_1", "size": 20000},
+    {"name": "Case_Report_1", "size": 20000}
+   ]
+  }
+ ]
+}
